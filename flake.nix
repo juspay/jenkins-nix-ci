@@ -8,12 +8,16 @@
   outputs = inputs@{ self, flake-parts, ... }:
     flake-parts.lib.mkFlake { inherit inputs; } {
       systems = inputs.nixpkgs.lib.systems.flakeExposed;
+      imports = [
+        ./nix/ngrok-outputs.nix
+      ];
       flake = {
         nixosConfigurations.jenkins-nix-ci = inputs.nixpkgs.lib.nixosSystem {
           system = "x86_64-linux";
           modules = [
             inputs.agenix.nixosModules.default
             ./nix/configuration.nix
+            ./nix/ngrok.nix
           ];
         };
         deploy.nodes.jenkins-nix-ci =
@@ -46,40 +50,6 @@
           default = {
             type = "app";
             program = "${inputs'.deploy-rs.packages.deploy-rs}/bin/deploy";
-          };
-
-          # SSH to the machine
-          ssh = {
-            type = "app";
-            program =
-              let
-                inherit (self.deploy.nodes.jenkins-nix-ci) sshOpts sshUser hostname;
-              in
-              lib.getExe (pkgs.writeShellApplication {
-                name = "ssh-jenkins-nix-ci";
-                text = ''
-                  ssh ${lib.concatStringsSep " " sshOpts} ${sshUser}@${hostname}
-                '';
-              });
-          };
-
-          # Exposes Jenkins service in http://localhost:8081
-          # (Also drops you into the SSH session)
-          port-forward = {
-            type = "app";
-            program =
-              let
-                inherit (self.deploy.nodes.jenkins-nix-ci) sshOpts sshUser hostname;
-              in
-              lib.getExe (pkgs.writeShellApplication {
-                name = "ssh-jenkins-nix-ci";
-                text = ''
-                  set -x
-                  ssh ${lib.concatStringsSep " " sshOpts} \
-                    -L 127.0.0.1:8081:localhost:8080 \
-                    ${sshUser}@${hostname}
-                '';
-              });
           };
         };
         formatter = pkgs.nixpkgs-fmt;
