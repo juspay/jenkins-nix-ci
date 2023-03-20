@@ -18,6 +18,7 @@
             inputs.agenix.nixosModules.default
             ./nix/configuration.nix
             ./nix/ngrok.nix
+            ./nix/jenkins.nix
           ];
         };
         deploy.nodes.jenkins-nix-ci =
