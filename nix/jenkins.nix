@@ -19,14 +19,6 @@ let
       system.domainCredentials = [
         {
           credentials = [
-            /*{
-              basicSSHUserPrivateKey = {
-                id = "ssh-privkey";
-                username = "jenkins";
-                privateKeySource.directEntry.privateKey =
-                  casc.readFile config.age.secrets.jenkins-ssh-privkey.path;
-              };
-            }*/
             {
               # Instructions for creating this Github App are at:
               # https://github.com/jenkinsci/github-branch-source-plugin/blob/master/docs/github-app.adoc#configuration-as-code-plugin
@@ -69,20 +61,6 @@ let
           allowsSignup = false;
         };
       };
-      /*
-      nodes = [
-        {
-          permanent = {
-            name = "jenkins-agent-contaiiner";
-            remoteFS = "/var/lib/jenkins/";
-            launcher.ssh = {
-              host = "undefined";
-              port = 22;
-            };
-          };
-        }
-      ];
-      */
     };
     unclassified.location.url = "https://${domain}/";
   };
@@ -90,6 +68,8 @@ let
   # Functions for working with configuration-as-code-plugin syntax.
   # https://github.com/jenkinsci/configuration-as-code-plugin/blob/master/docs/features/secrets.adoc#additional-variable-substitution
   casc = {
+    # This is useful when reading secrets decrypted by agenix.
+    # Never use builtins.readFile, https://github.com/ryantm/agenix#builtinsreadfile-anti-pattern
     readFile = path:
       "$" + "{readFile:" + path + "}";
     json = k: x:
@@ -100,12 +80,6 @@ in
   virtualisation.docker.enable = true;
   services.jenkins.extraGroups = [ "docker" ];
 
-  /*
-    age.secrets.jenkins-ssh-privkey = {
-    owner = "jenkins";
-    file = ../secrets/jenkins-ssh-privkey.age;
-    };
-  */
   age.secrets.docker-login = {
     owner = "jenkins";
     file = ../secrets/docker-login.age;
