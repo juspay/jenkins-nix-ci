@@ -2,14 +2,18 @@
   inputs = {
     nixpkgs.url = "github:nixos/nixpkgs/nixos-unstable";
     flake-parts.url = "github:hercules-ci/flake-parts";
+    flake-root.url = "github:srid/flake-root";
     deploy-rs.url = "github:serokell/deploy-rs";
     agenix.url = "github:ryantm/agenix";
+    jenkinsPlugins2nix.url = "github:Fuuzetsu/jenkinsPlugins2nix";
   };
   outputs = inputs@{ self, flake-parts, ... }:
     flake-parts.lib.mkFlake { inherit inputs; } {
       systems = inputs.nixpkgs.lib.systems.flakeExposed;
       imports = [
+        inputs.flake-root.flakeModule
         ./nix/ngrok-outputs.nix
+        ./nix/jenkins/plugins/flake-module.nix
       ];
       flake = {
         # nixosModules.default = ./nix/jenkins.nix; # TODO: WIP (See #3)
