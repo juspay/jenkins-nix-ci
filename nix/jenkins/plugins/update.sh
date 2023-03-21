@@ -1,7 +1,7 @@
 #!/bin/sh
 set -e
 SCRIPT_DIR=$( cd -- "$( dirname -- "${BASH_SOURCE[0]}" )" &> /dev/null && pwd )
-PLUGINS_NIX="${SCRIPT_DIR}/plugins.nix"
+PLUGINS_NIX="${SCRIPT_DIR}/default.nix"
 echo "Updating ${PLUGINS_NIX}"
 set -x
 nix --option system x86_64-darwin run github:Fuuzetsu/jenkinsPlugins2nix -- \

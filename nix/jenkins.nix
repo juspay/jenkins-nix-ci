@@ -110,8 +110,7 @@ in
       cachix
       docker
     ];
-    # ./jenkins/update-plugins.sh
-    plugins = import ./jenkins/plugins.nix {
+    plugins = import ./jenkins/plugins {
       inherit (pkgs) fetchurl stdenv;
     };
     extraJavaOptions = [
