@@ -19,6 +19,13 @@
             ./nix/configuration.nix
             ./nix/ngrok.nix
             ./nix/jenkins.nix
+            ({
+              jenkins-nix-ci = {
+                port = 9091;
+                # Hardcoded domain spit out by ngrok
+                domain = "b149-106-51-91-112.in.ngrok.io";
+              };
+            })
           ];
         };
         deploy.nodes.jenkins-nix-ci =

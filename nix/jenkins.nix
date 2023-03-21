@@ -1,13 +1,6 @@
-{ pkgs, config, ... }:
+{ pkgs, lib, config, ... }:
 
 let
-  # TODO: Expose these as module options to be set in top-level config.
-  # The port to run Jenkins on.
-  port = 9091;
-  # The domain in which Jenkins is exposed to the outside world through nginx.
-  # domain = "jenkins.nammayatri.in";
-  domain = "b149-106-51-91-112.in.ngrok.io";
-
   # Config for configuration-as-code-plugin
   #
   # This enable us to configure Jenkins declaratively rather than fiddle with
@@ -62,7 +55,7 @@ let
         };
       };
     };
-    unclassified.location.url = "https://${domain}/";
+    unclassified.location.url = "https://${config.jenkins-nix-ci.domain}/";
   };
 
   # Functions for working with configuration-as-code-plugin syntax.
@@ -77,65 +70,72 @@ let
   };
 in
 {
-  virtualisation.docker.enable = true;
-  services.jenkins.extraGroups = [ "docker" ];
-
-  age.secrets.docker-login = {
-    owner = "jenkins";
-    file = ../secrets/docker-login.age;
-  };
-  age.secrets.github-app-pem = {
-    owner = "jenkins";
-    file = ../secrets/github-app-pem.age;
-  };
-  age.secrets.cachix-token = {
-    owner = "jenkins";
-    file = ../secrets/cachix-token.age;
-  };
-
-  services.jenkins = {
-    enable = true;
-    inherit port;
-    environment = {
-      CASC_JENKINS_CONFIG =
-        builtins.toString (pkgs.writeText "jenkins.json" (builtins.toJSON cascConfig));
+  options = {
+    jenkins-nix-ci = lib.mkOption {
+      type = lib.types.submodule {
+        options = {
+          port = lib.mkOption {
+            type = lib.types.int;
+            default = 9091;
+            description = "The port to run Jenkins on.";
+          };
+          domain = lib.mkOption {
+            type = lib.types.str;
+            description = "The domain in which Jenkins is exposed to the outside world.";
+          };
+        };
+      };
+      default = { };
+      description = "Options for the jenkins-nix-ci module.";
     };
-    packages = with pkgs; [
-      # Add packages used by Jenkins plugins here.
-      git
-      bash # 'sh' step requires this
-      coreutils
-      which
-      nix
-      cachix
-      docker
-    ];
-    plugins = import ./jenkins/plugins {
-      inherit (pkgs) fetchurl stdenv;
-    };
-    extraJavaOptions = [
-      # Useful when the 'sh' step b0rks.
-      # https://stackoverflow.com/a/66098536/55246
-      "-Dorg.jenkinsci.plugins.durabletask.BourneShellScript.LAUNCH_DIAGNOSTICS=true"
-    ];
   };
+  config = {
+    virtualisation.docker.enable = true;
+    services.jenkins.extraGroups = [ "docker" ];
 
-  # To allow the local node to run as builder, supporting nix builds.
-  # This should not be necessary with external build agents.
-  nix.settings.allowed-users = [ "jenkins" ];
-  nix.settings.trusted-users = [ "jenkins" ];
-
-  /* Disabled because we are using ngrok.
-    /* services.nginx = {
-    virtualHosts.${domain} = {
-      forceSSL = true;
-      enableACME = true;
-      locations."/".extraConfig = ''
-        proxy_pass http://localhost:${toString port};
-        proxy_set_header Host $host;
-        proxy_set_header X-Real-IP $remote_addr;
-        proxy_set_header X-Forwarded-For $proxy_add_x_forwarded_for;
-      '';
+    age.secrets.docker-login = {
+      owner = "jenkins";
+      file = ../secrets/docker-login.age;
     };
-  }; */
+    age.secrets.github-app-pem = {
+      owner = "jenkins";
+      file = ../secrets/github-app-pem.age;
+    };
+    age.secrets.cachix-token = {
+      owner = "jenkins";
+      file = ../secrets/cachix-token.age;
+    };
+
+    services.jenkins = {
+      enable = true;
+      inherit (config.jenkins-nix-ci) port;
+      environment = {
+        CASC_JENKINS_CONFIG =
+          builtins.toString (pkgs.writeText "jenkins.json" (builtins.toJSON cascConfig));
+      };
+      packages = with pkgs; [
+        # Add packages used by Jenkins plugins here.
+        git
+        bash # 'sh' step requires this
+        coreutils
+        which
+        nix
+        cachix
+        docker
+      ];
+      plugins = import ./jenkins/plugins {
+        inherit (pkgs) fetchurl stdenv;
+      };
+      extraJavaOptions = [
+        # Useful when the 'sh' step b0rks.
+        # https://stackoverflow.com/a/66098536/55246
+        "-Dorg.jenkinsci.plugins.durabletask.BourneShellScript.LAUNCH_DIAGNOSTICS=true"
+      ];
+    };
+
+    # To allow the local node to run as builder, supporting nix builds.
+    # This should not be necessary with external build agents.
+    nix.settings.allowed-users = [ "jenkins" ];
+    nix.settings.trusted-users = [ "jenkins" ];
+  };
 }
