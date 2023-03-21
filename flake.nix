@@ -12,6 +12,7 @@
         ./nix/ngrok-outputs.nix
       ];
       flake = {
+        # nixosModules.default = ./nix/jenkins.nix; # TODO: WIP (See #3)
         nixosConfigurations.jenkins-nix-ci = inputs.nixpkgs.lib.nixosSystem {
           system = "x86_64-linux";
           modules = [
@@ -21,7 +22,6 @@
             ./nix/jenkins.nix
             ({
               jenkins-nix-ci = {
-                port = 9091;
                 # Hardcoded domain spit out by ngrok
                 domain = "b149-106-51-91-112.in.ngrok.io";
               };
