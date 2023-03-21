@@ -22,3 +22,9 @@ nix run . -- -s --remote-build
 ```
 
 (The `deploy` command is also available in the devshell)
+
+## TODO
+
+- [x] Initial Jenkins config
+- [ ] Separate build slave for Linux
+- [ ] Separate build slave for macOS (nix-darwin)

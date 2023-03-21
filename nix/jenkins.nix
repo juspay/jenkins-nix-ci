@@ -1,14 +1,12 @@
 { pkgs, config, ... }:
 
-# TODO:
-# - Build agents (SSH slave)
-#    - NixOS slave: container separation?
-#    - macOS slave (later)
 let
+  # TODO: Expose these as module options to be set in top-level config.
   # The port to run Jenkins on.
   port = 9091;
   # The domain in which Jenkins is exposed to the outside world through nginx.
-  domain = "jenkins.nammayatri.in";
+  # domain = "jenkins.nammayatri.in";
+  domain = "b149-106-51-91-112.in.ngrok.io";
 
   # Config for configuration-as-code-plugin
   #
@@ -17,46 +15,53 @@ let
   # cf:
   # https://github.com/mjuh/nixos-jenkins/blob/master/nixos/modules/services/continuous-integration/jenkins/jenkins.nix
   cascConfig = {
-    /* credentials = {
+    credentials = {
       system.domainCredentials = [
         {
           credentials = [
-            {
+            /*{
               basicSSHUserPrivateKey = {
                 id = "ssh-privkey";
                 username = "jenkins";
                 privateKeySource.directEntry.privateKey =
                   casc.readFile config.age.secrets.jenkins-ssh-privkey.path;
               };
-            }
+            }*/
             {
               # Instructions for creating this Github App are at:
               # https://github.com/jenkinsci/github-branch-source-plugin/blob/master/docs/github-app.adoc#configuration-as-code-plugin
               githubApp = {
-                appID = "307056"; # https://github.com/apps/jenkins-srid
-                description = "Github App - jenkins-srid";
+                appID = "308117";
+                description = "Github App - jenkins-nammayatri";
                 id = "github-app";
-                privateKey = casc.readFile config.age.secrets.jenkins-github-app-privkey.path;
+                privateKey = casc.readFile config.age.secrets.github-app-pem.path;
               };
             }
             {
               string = {
                 id = "cachix-auth-token";
-                description = "srid.cachix.org auth token";
-                secret = casc.json "value" (casc.readFile config.age.secrets.srid-cachix-auth-token.path);
+                description = "nammayatri.cachix.org auth token";
+                secret = casc.json "value" (casc.readFile config.age.secrets.cachix-token.path);
+              };
+            }
+            {
+              string = {
+                id = "docker-user";
+                description = "Docker user";
+                secret = casc.json "user" (casc.readFile config.age.secrets.docker-login.path);
               };
             }
             {
               string = {
                 id = "docker-pass";
-                description = "sridca Docker password";
-                secret = casc.json "value" (casc.readFile config.age.secrets.hkmangla-docker-pass.path);
+                description = "Docker password";
+                secret = casc.json "pass" (casc.readFile config.age.secrets.docker-login.path);
               };
             }
-          ]; 
+          ];
         }
       ];
-    };*/
+    };
     jenkins = {
       numExecutors = 6;
       securityRealm = {
@@ -79,7 +84,7 @@ let
       ];
       */
     };
-    # unclassified.location.url = "https://${domain}/";
+    unclassified.location.url = "https://${domain}/";
   };
 
   # Functions for working with configuration-as-code-plugin syntax.
@@ -100,19 +105,19 @@ in
     owner = "jenkins";
     file = ../secrets/jenkins-ssh-privkey.age;
     };
-    age.secrets.jenkins-github-app-privkey = {
-    owner = "jenkins";
-    file = ../secrets/jenkins-github-app-privkey.age;
-    };
-    age.secrets.srid-cachix-auth-token = {
-    owner = "jenkins";
-    file = ../secrets/srid-cachix-auth-token.age;
-    };
-    age.secrets.hkmangla-docker-pass = {
-    owner = "jenkins";
-    file = ../secrets/hkmangla-docker-pass.age;
-    };
   */
+  age.secrets.docker-login = {
+    owner = "jenkins";
+    file = ../secrets/docker-login.age;
+  };
+  age.secrets.github-app-pem = {
+    owner = "jenkins";
+    file = ../secrets/github-app-pem.age;
+  };
+  age.secrets.cachix-token = {
+    owner = "jenkins";
+    file = ../secrets/cachix-token.age;
+  };
 
   services.jenkins = {
     enable = true;
@@ -147,7 +152,8 @@ in
   nix.settings.allowed-users = [ "jenkins" ];
   nix.settings.trusted-users = [ "jenkins" ];
 
-  /* services.nginx = {
+  /* Disabled because we are using ngrok.
+    /* services.nginx = {
     virtualHosts.${domain} = {
       forceSSL = true;
       enableACME = true;

@@ -6,6 +6,8 @@
     file = ../secrets/ngrok-token.age;
   };
 
+  environment.systemPackages = [ pkgs.ngrok ];
+
   system.activationScripts = {
     ngrokStartup =
       let
