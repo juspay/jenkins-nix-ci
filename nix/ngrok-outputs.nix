@@ -33,7 +33,7 @@
             text = ''
               set -x
               ssh ${lib.concatStringsSep " " sshOpts} \
-                -L 127.0.0.1:8081:localhost:8080 \
+                -L 127.0.0.1:9091:localhost:9091 \
                 ${sshUser}@${hostname}
             '';
           });

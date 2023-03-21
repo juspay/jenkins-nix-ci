@@ -55,7 +55,7 @@
 
 
   services.openssh.enable = true;
-  services.openssh.passwordAuthentication = false;
+  services.openssh.settings.PasswordAuthentication = false;
 
   # This is mainly to avoid prompts in deploy-rs
   security.sudo.wheelNeedsPassword = false;
