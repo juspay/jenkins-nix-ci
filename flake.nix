@@ -61,7 +61,7 @@
         packages = {
           docker-push = pkgs.writeShellApplication {
             name = "docker-push";
-            packages = [ pkgs.jq ];
+            runtimeInputs = [ pkgs.jq ];
             text = ''
               set -euo pipefail
 
