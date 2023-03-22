@@ -68,7 +68,7 @@
               set -x
               docker load -i "$(nix build "$1" --print-out-paths)"
               set +x
-              IMAGE_NAME="$(nix eval --json .#packages.x86_64-linux.dockerImage.buildArgs | jq -r '"\(.name):\(.tag)"')"
+              IMAGE_NAME="$(nix eval --json .#packages.x86_64-linux."$1".buildArgs | jq -r '"\(.name):\(.tag)"')"
               echo "Built and loaded: ''${IMAGE_NAME}"
 
               echo "Logging in to Docker Registry"
