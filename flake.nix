@@ -57,6 +57,31 @@
           ];
         };
 
+        # Library of apps to run in `Jenkinsfile`
+        packages = {
+          docker-push = pkgs.writeShellApplication {
+            name = "docker-push";
+            text = ''
+              set -euo pipefail
+
+              set -x
+              docker load -i $(nix build "$1" --print-out-paths)
+              set +x
+              IMAGE_NAME=`$(nix eval --raw .#packages.x86_64-linux.$1.buildArgs.name):$(nix eval --raw .#packages.x86_64-linux.$1.buildArgs.tag)`
+              echo "Loaded image: ''${IMAGE_NAME}"
+
+              echo "Logging in to Docker Registry"
+              export HOME=$(mktemp -d)
+              trap 'rm -rf "$HOME"'  EXIT
+              echo ''${DOCKER_PASS} | docker login -u ''${DOCKER_USER} --password-stdin ''${DOCKER_SERVER}
+              set -x
+              docker push "''${IMAGE_NAME}"
+              set +x
+              docker logout "''${DOCKER_SERVER}"
+            '';
+          };
+        };
+
         apps = {
           # Deploy
           default = {
