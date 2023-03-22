@@ -61,14 +61,15 @@
         packages = {
           docker-push = pkgs.writeShellApplication {
             name = "docker-push";
+            packages = [ pkgs.jq ];
             text = ''
               set -euo pipefail
 
               set -x
               docker load -i "$(nix build "$1" --print-out-paths)"
               set +x
-              IMAGE_NAME="$(nix eval --raw .#packages.x86_64-linux."$1".buildArgs.name):$(nix eval --raw .#packages.x86_64-linux."$1".buildArgs.tag)"
-              echo "Loaded image: ''${IMAGE_NAME}"
+              IMAGE_NAME="$(nix eval --json .#packages.x86_64-linux.dockerImage.buildArgs | jq '\"\(.name):\(.tag)\"')"
+              echo "Built and loaded: ''${IMAGE_NAME}"
 
               echo "Logging in to Docker Registry"
               HOME="$(mktemp -d)"
