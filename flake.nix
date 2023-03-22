@@ -72,14 +72,41 @@
               echo "Built and loaded: ''${IMAGE_NAME}"
 
               echo "Logging in to Docker Registry"
+
+              # Use a temp directory as $HOME, because 'docker login' stores the
+              # password insecurely.
               HOME="$(mktemp -d)"
               export HOME
               trap 'rm -rf "$HOME"'  EXIT
+
               echo "''${DOCKER_PASS}" | docker login -u "''${DOCKER_USER}" --password-stdin "''${DOCKER_SERVER}"
               set -x
               docker push "''${IMAGE_NAME}"
               set +x
               docker logout "''${DOCKER_SERVER}"
+            '';
+          };
+
+          cachix-push = pkgs.writeShellApplication {
+            name = "cachix-push";
+            runtimeInputs = [ pkgs.cachix ];
+            # https://docs.cachix.org/pushing
+            text = ''
+              set -euo pipefail
+
+              CACHE="$1"
+
+              # Push all packages.
+              set -x
+              nix build --json \
+                | jq -r '.[].outputs | to_entries[].value' \
+                | cachix push "''${CACHE}"
+
+              # Push devshell.
+              # Clear all but $PATH, to prevent secrets leaking to shellHook.
+              env -i PATH="$PATH" nix develop --profile dev-profile -c echo
+              cachix push "''${CACHE}" dev-profile
+              rm dev-profile
             '';
           };
         };
