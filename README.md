@@ -23,12 +23,15 @@ nix run . -- -s --remote-build
 
 (The `deploy` command is also available in the devshell)
 
-## TODO
+## Tasks
 
 - [x] Initial Jenkins config
+    - jenkinsPlugins2nix
     - Configuration as code
     - Ngrok
-- [ ] Expose a managed library for reuse in `Jenkinsfile`, for  cachix use/push, docker push, etc.
+- [x] Flake apps that recognize the secrets and perform necessary operations
+    - cachix push
+    - docker push
 - NixOS module: https://github.com/juspay/jenkins-nix-ci/issues/3
 - [ ] Separate build slave for Linux
 - [ ] Separate build slave for macOS (nix-darwin)
