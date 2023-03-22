@@ -89,7 +89,7 @@
 
           cachix-push = pkgs.writeShellApplication {
             name = "cachix-push";
-            runtimeInputs = [ pkgs.cachix ];
+            runtimeInputs = [ pkgs.cachix pkgs.jq ];
             # https://docs.cachix.org/pushing
             text = ''
               set -euo pipefail
