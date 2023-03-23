@@ -68,12 +68,18 @@ in
             };
         });
 
-      config = {
-        flake.nixosModules.jenkins-master = { pkgs, ... }: {
-          imports = [ ./jenkins.nix ];
-          jenkins-nix-ci = {
-            inherit (config.jenkins-nix-ci) port domain;
-          };
+      flake = mkOption {
+        type = types.submoduleWith {
+          modules = [{
+            config = {
+              nixosModules.jenkins-master = { pkgs, ... }: {
+                imports = [ ./jenkins.nix ];
+                jenkins-nix-ci = {
+                  inherit (config.jenkins-nix-ci) port domain;
+                };
+              };
+            };
+          }];
         };
       };
     };
