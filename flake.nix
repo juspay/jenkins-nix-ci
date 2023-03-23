@@ -58,6 +58,7 @@
         };
 
         # Library of apps to run in `Jenkinsfile`
+        # TODO: Remove after nammayatri change is merged
         packages = {
           docker-push = pkgs.writeShellApplication {
             name = "docker-push";
