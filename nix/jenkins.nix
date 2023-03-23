@@ -2,7 +2,7 @@
 
 {
   imports = [
-    ./jenkins/options.nix
+    ./jenkins/casc.nix
   ];
   config = {
     age.secrets.docker-login = {
@@ -58,6 +58,7 @@
     nix.settings.allowed-users = [ "jenkins" ];
     nix.settings.trusted-users = [ "jenkins" ];
 
+    # Install docker so we can build images.
     virtualisation.docker.enable = true;
     services.jenkins.extraGroups = [ "docker" ];
   };

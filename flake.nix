@@ -9,7 +9,7 @@
     nixos-flake.url = "github:srid/nixos-flake";
   };
   outputs = inputs@{ self, flake-parts, ... }:
-    flake-parts.lib.mkFlake { inherit inputs; } ({ config, ... }: {
+    flake-parts.lib.mkFlake { inherit inputs; } {
       systems = inputs.nixpkgs.lib.systems.flakeExposed;
       imports = [
         inputs.nixos-flake.flakeModule
@@ -81,5 +81,5 @@
         };
         formatter = pkgs.nixpkgs-fmt;
       };
-    });
+    };
 }

@@ -13,6 +13,8 @@ let
   };
 in
 {
+  # TODO: Drop this in favour of flake config, and build cascConfig based on the
+  # parametrized options.
   options.jenkins-nix-ci = lib.mkOption {
     type = lib.types.submodule
       {
