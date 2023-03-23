@@ -7,15 +7,15 @@
   config = {
     age.secrets.docker-login = {
       owner = "jenkins";
-      file = ../secrets/docker-login.age;
+      file = flake.self + /secrets/docker-login.age;
     };
     age.secrets.github-app-pem = {
       owner = "jenkins";
-      file = ../secrets/github-app-pem.age;
+      file = flake.self + /secrets/github-app-pem.age;
     };
     age.secrets.cachix-token = {
       owner = "jenkins";
-      file = ../secrets/cachix-token.age;
+      file = flake.self + /secrets/cachix-token.age;
     };
 
     services.jenkins = {
