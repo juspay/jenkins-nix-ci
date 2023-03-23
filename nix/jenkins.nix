@@ -82,20 +82,34 @@ in
                     location.url = "https://${config.jenkins-nix-ci.domain}/";
                     # https://github.com/jenkinsci/configuration-as-code-plugin/issues/725
                     globalLibraries.libraries = [
+                      # We load the library from the Nix store, as this would
+                      # make the setup self-contained. Jenkins doesn't support a
+                      # local path retriever, so we cheat by piggybacking on the
+                      # git backend.
                       {
                         name = "jenkins-nix-ci";
                         defaultVersion = "main";
                         implicit = true;
-                        retriever.modernSCM = {
-                          libraryPath = "groovy-library";
-                          scm.github = {
-                            id = "b2406d48-e4ab-4f86-a80f-22e7244004b0";
-                            repoOwner = "juspay";
-                            repository = "jenkins-nix-ci";
-                            traits = [
-                              { branchDiscoveryTrait.strategyId = 1; }
-                              { originPullRequestDiscoveryTrait.strategyId = 1; }
-                              { forkPullRequestDiscoveryTrait.strategyId = 1; }
+                        retriever.legacySCM = {
+                          scm.git = {
+                            userRemoteConfigs = [
+                              {
+                                url =
+                                  let
+                                    libraryInGit =
+                                      pkgs.runCommand "jenkins-nix-ci-library" { buildInputs = [ pkgs.git ]; } ''
+                                        mkdir -p $out
+                                        cp -r ${../groovy-library}/* $out
+                                        cd $out
+                                        git init
+                                        git add .
+                                        git config user.email "nobody@localhost"
+                                        git config user.name "github:juspay/jenkins-nix-ci"
+                                        git commit -m "Added by pkgs.runCommand"
+                                      '';
+                                  in
+                                  builtins.toString libraryInGit;
+                              }
                             ];
                           };
                         };
@@ -161,6 +175,8 @@ in
         # Useful when the 'sh' step b0rks.
         # https://stackoverflow.com/a/66098536/55246
         "-Dorg.jenkinsci.plugins.durabletask.BourneShellScript.LAUNCH_DIAGNOSTICS=true"
+        # To allow referencing local libraries in the /nix store. ie., our /groovy-library.
+        "-Dhudson.plugins.git.GitSCM.ALLOW_LOCAL_CHECKOUT=true"
       ];
     };
 

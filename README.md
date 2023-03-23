@@ -31,7 +31,7 @@ nix run . -- -s --remote-build
     - jenkinsPlugins2nix
     - Configuration as code
     - Ngrok
-- [x] Associated Groovy libraries
+- [x] Associated Groovy libraries (served from the nix store)
     - cachix push
     - docker push
 - NixOS module: https://github.com/juspay/jenkins-nix-ci/issues/3
