@@ -1,4 +1,4 @@
-{ self, config, lib, flake-parts-lib, withSystem, ... }:
+{ inputs, config, lib, flake-parts-lib, ... }:
 
 let
   inherit (flake-parts-lib)
@@ -6,9 +6,6 @@ let
   inherit (lib)
     mkOption
     types;
-  inherit (types)
-    functionTo
-    raw;
 in
 {
   options =
@@ -24,6 +21,20 @@ in
             type = lib.types.str;
             description = "The domain in which Jenkins is exposed to the outside world.";
           };
+          plugins = lib.mkOption {
+            type = lib.types.listOf lib.types.str;
+            default = [ ];
+            description = "A list of plugins to install.";
+          };
+          plugins-file = lib.mkOption {
+            type = lib.types.str;
+            default = null;
+            description = ''
+              Path to the generated Nix expression containing the plugins.
+
+              Must be relative to project root.
+            '';
+          };
         };
       };
     in
@@ -35,14 +46,35 @@ in
           Jenkins Nix CI configuration.
         '';
       };
-    };
+      perSystem = mkPerSystemOption
+        (perSystem@{ pkgs, system, ... }: {
+          config.packages.update-plugins =
+            let
+              jenkinsPlugins2nix_system =
+                if system == "aarch64-darwin" then "x86_64-darwin" else system;
+              jenkinsPlugins2nix = inputs.jenkinsPlugins2nix.packages.${jenkinsPlugins2nix_system}.jenkinsPlugins2nix;
+              inherit (config.jenkins-nix-ci) plugins plugins-file;
 
-  config = {
-    flake.nixosModules.jenkins-master = { pkgs, ... }: {
-      imports = [ ./jenkins.nix ];
-      jenkins-nix-ci = {
-        inherit (config.jenkins-nix-ci) port domain;
+            in
+            pkgs.writeShellApplication {
+              name = "update-plugins";
+              text = ''
+                ${lib.getExe perSystem.config.flake-root.package}
+                set -x
+                ${lib.getExe jenkinsPlugins2nix} \
+                  ${lib.foldl (a: b: "${a} -p ${b}") "" plugins} \
+                  > ${plugins-file}
+              '';
+            };
+        });
+
+      config = {
+        flake.nixosModules.jenkins-master = { pkgs, ... }: {
+          imports = [ ./jenkins.nix ];
+          jenkins-nix-ci = {
+            inherit (config.jenkins-nix-ci) port domain;
+          };
+        };
       };
     };
-  };
 }

@@ -14,12 +14,20 @@
         inputs.flake-root.flakeModule
         ./nix/flake-module.nix
         ./nix/ngrok-outputs.nix
-        ./nix/jenkins/plugins/flake-module.nix
       ];
       # This produces self.nixosModules.jenkins-master module for NixOS.
       jenkins-nix-ci = {
         # Hardcoded domain spit out by ngrok
         domain = "b149-106-51-91-112.in.ngrok.io";
+        plugins = [
+          "github-api"
+          "git"
+          "github-branch-source"
+          "workflow-aggregator"
+          "ssh-slaves"
+          "configuration-as-code"
+        ];
+        plugins-file = "nix/jenkins/plugins/default.nix";
       };
       flake = {
         nixosConfigurations.jenkins-nix-ci = inputs.nixpkgs.lib.nixosSystem {
