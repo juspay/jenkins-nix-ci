@@ -6,30 +6,38 @@
     deploy-rs.url = "github:serokell/deploy-rs";
     agenix.url = "github:ryantm/agenix";
     jenkinsPlugins2nix.url = "github:Fuuzetsu/jenkinsPlugins2nix";
+    nixos-flake.url = "github:srid/nixos-flake";
   };
   outputs = inputs@{ self, flake-parts, ... }:
     flake-parts.lib.mkFlake { inherit inputs; } {
       systems = inputs.nixpkgs.lib.systems.flakeExposed;
       imports = [
+        inputs.nixos-flake.flakeModule
         inputs.flake-root.flakeModule
+        ./nix/flake-module.nix
         ./nix/ngrok-outputs.nix
-        ./nix/jenkins/plugins/flake-module.nix
       ];
+      # This produces self.nixosModules.jenkins-master module for NixOS.
+      jenkins-nix-ci = {
+        # Hardcoded domain spit out by ngrok
+        domain = "b149-106-51-91-112.in.ngrok.io";
+        plugins = [
+          "github-api"
+          "git"
+          "github-branch-source"
+          "workflow-aggregator"
+          "ssh-slaves"
+          "configuration-as-code"
+        ];
+        plugins-file = "nix/jenkins/plugins.nix";
+      };
       flake = {
-        # nixosModules.default = ./nix/jenkins.nix; # TODO: WIP (See #3)
-        nixosConfigurations.jenkins-nix-ci = inputs.nixpkgs.lib.nixosSystem {
-          system = "x86_64-linux";
-          modules = [
+        nixosConfigurations.jenkins-nix-ci = self.nixos-flake.lib.mkLinuxSystem {
+          imports = [
             inputs.agenix.nixosModules.default
+            self.nixosModules.jenkins-master
             ./nix/configuration.nix
             ./nix/ngrok.nix
-            ./nix/jenkins.nix
-            ({
-              jenkins-nix-ci = {
-                # Hardcoded domain spit out by ngrok
-                domain = "b149-106-51-91-112.in.ngrok.io";
-              };
-            })
           ];
         };
         deploy.nodes.jenkins-nix-ci =
@@ -58,7 +66,7 @@
         };
 
         # Library of apps to run in `Jenkinsfile`
-        # TODO: Remove after nammayatri change is merged
+        # TODO: Remove after this PR is merged: https://github.com/nammayatri/nammayatri/pull/284
         packages = {
           docker-push = pkgs.callPackage ./groovy-library/vars/dockerPush.nix { };
           cachix-push = pkgs.callPackage ./groovy-library/vars/cachixPush.nix { };

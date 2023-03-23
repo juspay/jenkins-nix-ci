@@ -161,6 +161,21 @@
         "type": "github"
       }
     },
+    "nixos-flake": {
+      "locked": {
+        "lastModified": 1679404711,
+        "narHash": "sha256-RNrCfkA9yGhuy3HrXY9NZsUg6yu8qcxwPoc9o9NwiI0=",
+        "owner": "srid",
+        "repo": "nixos-flake",
+        "rev": "0d1ae4383d9bc18fcd3857917616188f6ae61ff4",
+        "type": "github"
+      },
+      "original": {
+        "owner": "srid",
+        "repo": "nixos-flake",
+        "type": "github"
+      }
+    },
     "nixpkgs": {
       "locked": {
         "lastModified": 1677676435,
@@ -250,6 +265,7 @@
         "flake-parts": "flake-parts",
         "flake-root": "flake-root",
         "jenkinsPlugins2nix": "jenkinsPlugins2nix",
+        "nixos-flake": "nixos-flake",
         "nixpkgs": "nixpkgs_4"
       }
     },
