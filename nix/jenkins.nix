@@ -1,4 +1,4 @@
-{ pkgs, lib, config, ... }:
+{ flake, pkgs, lib, config, ... }:
 
 let
   # Functions for working with configuration-as-code-plugin syntax.
@@ -19,15 +19,6 @@ in
         {
           options =
             {
-              port = lib.mkOption {
-                type = lib.types.int;
-                default = 9091;
-                description = "The port to run Jenkins on.";
-              };
-              domain = lib.mkOption {
-                type = lib.types.str;
-                description = "The domain in which Jenkins is exposed to the outside world.";
-              };
               cascConfig = lib.mkOption {
                 type = lib.types.attrs;
                 default = {
@@ -79,7 +70,7 @@ in
                     };
                   };
                   unclassified = {
-                    location.url = "https://${config.jenkins-nix-ci.domain}/";
+                    location.url = "https://${flake.config.jenkins-nix-ci.domain}/";
                     # https://github.com/jenkinsci/configuration-as-code-plugin/issues/725
                     globalLibraries.libraries = [
                       # We load the library from the Nix store, as this would
@@ -149,7 +140,7 @@ in
 
     services.jenkins = {
       enable = true;
-      inherit (config.jenkins-nix-ci) port;
+      inherit (flake.config.jenkins-nix-ci) port;
       environment = {
         CASC_JENKINS_CONFIG =
           builtins.toString (pkgs.writeText "jenkins.json" (builtins.toJSON config.jenkins-nix-ci.cascConfig));
