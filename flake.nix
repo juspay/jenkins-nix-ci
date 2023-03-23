@@ -8,28 +8,27 @@
     jenkinsPlugins2nix.url = "github:Fuuzetsu/jenkinsPlugins2nix";
   };
   outputs = inputs@{ self, flake-parts, ... }:
-    flake-parts.lib.mkFlake { inherit inputs; } {
+    flake-parts.lib.mkFlake { inherit inputs; } ({ config, ... }: {
       systems = inputs.nixpkgs.lib.systems.flakeExposed;
       imports = [
         inputs.flake-root.flakeModule
+        ./nix/flake-module.nix
         ./nix/ngrok-outputs.nix
         ./nix/jenkins/plugins/flake-module.nix
       ];
+      # This produces self.nixosModules.jenkins-master module for NixOS.
+      jenkins-nix-ci = {
+        # Hardcoded domain spit out by ngrok
+        domain = "b149-106-51-91-112.in.ngrok.io";
+      };
       flake = {
-        # nixosModules.default = ./nix/jenkins.nix; # TODO: WIP (See #3)
         nixosConfigurations.jenkins-nix-ci = inputs.nixpkgs.lib.nixosSystem {
           system = "x86_64-linux";
           modules = [
             inputs.agenix.nixosModules.default
+            self.nixosModules.jenkins-master
             ./nix/configuration.nix
             ./nix/ngrok.nix
-            ./nix/jenkins.nix
-            ({
-              jenkins-nix-ci = {
-                # Hardcoded domain spit out by ngrok
-                domain = "b149-106-51-91-112.in.ngrok.io";
-              };
-            })
           ];
         };
         deploy.nodes.jenkins-nix-ci =
@@ -73,5 +72,5 @@
         };
         formatter = pkgs.nixpkgs-fmt;
       };
-    };
+    });
 }
