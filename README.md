@@ -1,6 +1,8 @@
 # jenkins-nix-ci
 
-WIP: NixOS configuration to run Jenkins and Nix-based build agents via nix-darwin and NixOS 
+**WIP**: NixOS configuration to run Jenkins and Nix-based build agents via nix-darwin and NixOS 
+
+**NOTE**: This repo will not be re-usable until https://github.com/juspay/jenkins-nix-ci/issues/3
 
 ## Local development
 
