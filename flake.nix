@@ -6,11 +6,13 @@
     deploy-rs.url = "github:serokell/deploy-rs";
     agenix.url = "github:ryantm/agenix";
     jenkinsPlugins2nix.url = "github:Fuuzetsu/jenkinsPlugins2nix";
+    nixos-flake.url = "github:srid/nixos-flake";
   };
   outputs = inputs@{ self, flake-parts, ... }:
     flake-parts.lib.mkFlake { inherit inputs; } ({ config, ... }: {
       systems = inputs.nixpkgs.lib.systems.flakeExposed;
       imports = [
+        inputs.nixos-flake.flakeModule
         inputs.flake-root.flakeModule
         ./nix/flake-module.nix
         ./nix/ngrok-outputs.nix
@@ -30,9 +32,8 @@
         plugins-file = "nix/jenkins/plugins.nix";
       };
       flake = {
-        nixosConfigurations.jenkins-nix-ci = inputs.nixpkgs.lib.nixosSystem {
-          system = "x86_64-linux";
-          modules = [
+        nixosConfigurations.jenkins-nix-ci = self.nixos-flake.lib.mkLinuxSystem {
+          imports = [
             inputs.agenix.nixosModules.default
             self.nixosModules.jenkins-master
             ./nix/configuration.nix
@@ -65,7 +66,7 @@
         };
 
         # Library of apps to run in `Jenkinsfile`
-        # TODO: Remove after nammayatri change is merged
+        # TODO: Remove after this PR is merged: https://github.com/nammayatri/nammayatri/pull/284
         packages = {
           docker-push = pkgs.callPackage ./groovy-library/vars/dockerPush.nix { };
           cachix-push = pkgs.callPackage ./groovy-library/vars/cachixPush.nix { };
