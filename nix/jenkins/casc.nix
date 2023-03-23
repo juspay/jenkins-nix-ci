@@ -93,21 +93,7 @@ in
                 scm.git = {
                   userRemoteConfigs = [
                     {
-                      url =
-                        let
-                          libraryInGit =
-                            pkgs.runCommand "jenkins-nix-ci-library" { buildInputs = [ pkgs.git ]; } ''
-                              mkdir -p $out
-                              cp -r ${../../groovy-library}/* $out
-                              cd $out
-                              git init
-                              git add .
-                              git config user.email "nobody@localhost"
-                              git config user.name "github:juspay/jenkins-nix-ci"
-                              git commit -m "Added by pkgs.runCommand"
-                            '';
-                        in
-                        builtins.toString libraryInGit;
+                      url = builtins.toString (pkgs.callPackage ../../groovy-library/git.nix { });
                     }
                   ];
                 };
