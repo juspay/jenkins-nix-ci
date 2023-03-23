@@ -27,7 +27,7 @@
           "ssh-slaves"
           "configuration-as-code"
         ];
-        plugins-file = "nix/jenkins/plugins/default.nix";
+        plugins-file = "nix/jenkins/plugins.nix";
       };
       flake = {
         nixosConfigurations.jenkins-nix-ci = inputs.nixpkgs.lib.nixosSystem {
