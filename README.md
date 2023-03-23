@@ -34,6 +34,6 @@ nix run . -- -s --remote-build
 - [x] Associated Groovy libraries (served from the nix store)
     - cachix push
     - docker push
-- NixOS module: https://github.com/juspay/jenkins-nix-ci/issues/3
+- [ ] NixOS module: https://github.com/juspay/jenkins-nix-ci/issues/3
 - [ ] Separate build slave for Linux
 - [ ] Separate build slave for macOS (nix-darwin)

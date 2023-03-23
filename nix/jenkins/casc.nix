@@ -13,113 +13,110 @@ let
   };
 in
 {
-  # TODO: Drop this in favour of flake config, and build cascConfig based on the
-  # parametrized options.
   options.jenkins-nix-ci = lib.mkOption {
-    type = lib.types.submodule
-      {
-        options =
-          {
-            cascConfig = lib.mkOption {
-              type = lib.types.attrs;
-              default = {
-                credentials = {
-                  system.domainCredentials = [
-                    {
-                      credentials = [
-                        {
-                          # Instructions for creating this Github App are at:
-                          # https://github.com/jenkinsci/github-branch-source-plugin/blob/master/docs/github-app.adoc#configuration-as-code-plugin
-                          githubApp = {
-                            appID = "308117";
-                            description = "Github App - jenkins-nammayatri";
-                            id = "github-app";
-                            privateKey = casc.readFile config.age.secrets.github-app-pem.path;
-                          };
-                        }
-                        {
-                          string = {
-                            id = "cachix-auth-token";
-                            description = "nammayatri.cachix.org auth token";
-                            secret = casc.json "value" (casc.readFile config.age.secrets.cachix-token.path);
-                          };
-                        }
-                        {
-                          string = {
-                            id = "docker-user";
-                            description = "Docker user";
-                            secret = casc.json "user" (casc.readFile config.age.secrets.docker-login.path);
-                          };
-                        }
-                        {
-                          string = {
-                            id = "docker-pass";
-                            description = "Docker password";
-                            secret = casc.json "pass" (casc.readFile config.age.secrets.docker-login.path);
-                          };
-                        }
-                      ];
-                    }
-                  ];
-                };
-                jenkins = {
-                  numExecutors = 6;
-                  securityRealm = {
-                    local = {
-                      allowsSignup = false;
-                    };
+    type = lib.types.submodule {
+      options = {
+        cascConfig = lib.mkOption {
+          type = lib.types.attrs;
+          description = ''
+            Config for configuration-as-code-plugin
+                 
+            This enable us to configure Jenkins declaratively rather than fiddle with
+            the UI manually.
+            cf:
+            https://github.com/mjuh/nixos-jenkins/blob/master/nixos/modules/services/continuous-integration/jenkins/jenkins.nix
+          '';
+        };
+      };
+      # TODO: Build cascConfig based on the parametrized options in flake-parts module
+      config.cascConfig = {
+        credentials = {
+          system.domainCredentials = [
+            {
+              credentials = [
+                {
+                  # Instructions for creating this Github App are at:
+                  # https://github.com/jenkinsci/github-branch-source-plugin/blob/master/docs/github-app.adoc#configuration-as-code-plugin
+                  githubApp = {
+                    appID = "308117";
+                    description = "Github App - jenkins-nammayatri";
+                    id = "github-app";
+                    privateKey = casc.readFile config.age.secrets.github-app-pem.path;
                   };
-                };
-                unclassified = {
-                  location.url = "https://${flake.config.jenkins-nix-ci.domain}/";
-                  # https://github.com/jenkinsci/configuration-as-code-plugin/issues/725
-                  globalLibraries.libraries = [
-                    # We load the library from the Nix store, as this would
-                    # make the setup self-contained. Jenkins doesn't support a
-                    # local path retriever, so we cheat by piggybacking on the
-                    # git backend.
+                }
+                {
+                  string = {
+                    id = "cachix-auth-token";
+                    description = "nammayatri.cachix.org auth token";
+                    secret = casc.json "value" (casc.readFile config.age.secrets.cachix-token.path);
+                  };
+                }
+                {
+                  string = {
+                    id = "docker-user";
+                    description = "Docker user";
+                    secret = casc.json "user" (casc.readFile config.age.secrets.docker-login.path);
+                  };
+                }
+                {
+                  string = {
+                    id = "docker-pass";
+                    description = "Docker password";
+                    secret = casc.json "pass" (casc.readFile config.age.secrets.docker-login.path);
+                  };
+                }
+              ];
+            }
+          ];
+        };
+        jenkins = {
+          numExecutors = 6;
+          securityRealm = {
+            local = {
+              allowsSignup = false;
+            };
+          };
+        };
+        unclassified = {
+          location.url = "https://${flake.config.jenkins-nix-ci.domain}/";
+          # https://github.com/jenkinsci/configuration-as-code-plugin/issues/725
+          globalLibraries.libraries = [
+            # We load the library from the Nix store, as this would
+            # make the setup self-contained. Jenkins doesn't support a
+            # local path retriever, so we cheat by piggybacking on the
+            # git backend.
+            {
+              name = "jenkins-nix-ci";
+              defaultVersion = "main";
+              implicit = true;
+              retriever.legacySCM = {
+                scm.git = {
+                  userRemoteConfigs = [
                     {
-                      name = "jenkins-nix-ci";
-                      defaultVersion = "main";
-                      implicit = true;
-                      retriever.legacySCM = {
-                        scm.git = {
-                          userRemoteConfigs = [
-                            {
-                              url =
-                                let
-                                  libraryInGit =
-                                    pkgs.runCommand "jenkins-nix-ci-library" { buildInputs = [ pkgs.git ]; } ''
-                                      mkdir -p $out
-                                      cp -r ${../../groovy-library}/* $out
-                                      cd $out
-                                      git init
-                                      git add .
-                                      git config user.email "nobody@localhost"
-                                      git config user.name "github:juspay/jenkins-nix-ci"
-                                      git commit -m "Added by pkgs.runCommand"
-                                    '';
-                                in
-                                builtins.toString libraryInGit;
-                            }
-                          ];
-                        };
-                      };
+                      url =
+                        let
+                          libraryInGit =
+                            pkgs.runCommand "jenkins-nix-ci-library" { buildInputs = [ pkgs.git ]; } ''
+                              mkdir -p $out
+                              cp -r ${../../groovy-library}/* $out
+                              cd $out
+                              git init
+                              git add .
+                              git config user.email "nobody@localhost"
+                              git config user.name "github:juspay/jenkins-nix-ci"
+                              git commit -m "Added by pkgs.runCommand"
+                            '';
+                        in
+                        builtins.toString libraryInGit;
                     }
                   ];
                 };
               };
-              description = ''
-                Config for configuration-as-code-plugin
-                 
-                This enable us to configure Jenkins declaratively rather than fiddle with
-                the UI manually.
-                cf:
-                https://github.com/mjuh/nixos-jenkins/blob/master/nixos/modules/services/continuous-integration/jenkins/jenkins.nix
-              '';
-            };
-          };
+            }
+          ];
+        };
       };
+    };
     default = { };
     description = "Options for the jenkins-nix-ci module.";
   };
