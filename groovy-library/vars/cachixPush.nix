@@ -9,7 +9,9 @@ pkgs.writeShellApplication {
 
     CACHE="$1"
 
-    # Push all packages.
+    # Push the .#default package.
+    # TODO: We want to push *all* packages.
+    # cf. https://github.com/NixOS/nix/issues/7165
     set -x
     nix build --json \
       | jq -r '.[].outputs | to_entries[].value' \
