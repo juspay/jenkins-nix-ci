@@ -168,7 +168,8 @@ in
         (pkgs.callPackage ../groovy-library/vars/cachixPush.nix { inherit pkgs; })
         (pkgs.callPackage ../groovy-library/vars/dockerPush.nix { inherit pkgs; })
       ];
-      plugins = import ./jenkins/plugins {
+      # TODO: use flake-parts module
+      plugins = import ./jenkins/plugins.nix {
         inherit (pkgs) fetchurl stdenv;
       };
       extraJavaOptions = [
