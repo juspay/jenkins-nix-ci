@@ -11,6 +11,35 @@ let
     json = k: x:
       "$" + "{json:" + k + ":" + x + "}";
   };
+
+  # Jenkins doesn't support a local retriever; so we simulate one by
+  # piggybacking on its git scm retriever.
+  #
+  # `localPath` is local path, typically a nix store path. Internally, a new
+  # store path is created as a copy of it but with a git index, so Jenkins' git
+  # scm retriever can access it.
+  localRetriever = name: localPath:
+    let
+      pathInGit = path: pkgs.runCommand name
+        {
+          buildInputs = [ pkgs.git ];
+        }
+        ''
+          mkdir -p $out
+          cp -r ${path}/* $out
+          cd $out
+          git init
+          git add .
+          git config user.email "nobody@localhost"
+          git config user.name "nix"
+          git commit -m "Added by pkgs.runCommand (for localRetriever)"
+        '';
+    in
+    {
+      legacySCM.scm.git.userRemoteConfigs = [{
+        url = builtins.toString (pathInGit localPath);
+      }];
+    };
 in
 {
   options.jenkins-nix-ci = lib.mkOption {
@@ -81,23 +110,13 @@ in
           location.url = "https://${flake.config.jenkins-nix-ci.domain}/";
           # https://github.com/jenkinsci/configuration-as-code-plugin/issues/725
           globalLibraries.libraries = [
-            # We load the library from the Nix store, as this would
-            # make the setup self-contained. Jenkins doesn't support a
-            # local path retriever, so we cheat by piggybacking on the
-            # git backend.
             {
               name = "jenkins-nix-ci";
               defaultVersion = "main";
               implicit = true;
-              retriever.legacySCM = {
-                scm.git = {
-                  userRemoteConfigs = [
-                    {
-                      url = builtins.toString (pkgs.callPackage ../../groovy-library/git.nix { });
-                    }
-                  ];
-                };
-              };
+              retriever = localRetriever
+                "jenkins-nix-ci-library"
+                ../../groovy-library;
             }
           ];
         };
