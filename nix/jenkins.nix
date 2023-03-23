@@ -78,7 +78,30 @@ in
                       };
                     };
                   };
-                  unclassified.location.url = "https://${config.jenkins-nix-ci.domain}/";
+                  unclassified = {
+                    location.url = "https://${config.jenkins-nix-ci.domain}/";
+                    # https://github.com/jenkinsci/configuration-as-code-plugin/issues/725
+                    globalLibraries.libraries = [
+                      {
+                        name = "jenkins-nix-ci";
+                        defaultVersion = "main";
+                        implicit = true;
+                        retriever.modernSCM = {
+                          libraryPath = "groovy-library";
+                          scm.github = {
+                            id = "b2406d48-e4ab-4f86-a80f-22e7244004b0";
+                            repoOwner = "juspay";
+                            repository = "jenkins-nix-ci";
+                            traits = [
+                              { branchDiscoveryTrait.strategyId = 1; }
+                              { originPullRequestDiscoveryTrait.strategyId = 1; }
+                              { forkPullRequestDiscoveryTrait.strategyId = 1; }
+                            ];
+                          };
+                        };
+                      }
+                    ];
+                  };
                 };
                 description = ''
                   Config for configuration-as-code-plugin
@@ -124,8 +147,12 @@ in
         coreutils
         which
         nix
-        cachix
         docker
+
+        # Groovy library packages
+        cachix
+        (pkgs.callPackage ../groovy-library/vars/cachixPush.nix { inherit pkgs; })
+        (pkgs.callPackage ../groovy-library/vars/dockerPush.nix { inherit pkgs; })
       ];
       plugins = import ./jenkins/plugins {
         inherit (pkgs) fetchurl stdenv;

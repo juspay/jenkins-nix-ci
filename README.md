@@ -31,7 +31,7 @@ nix run . -- -s --remote-build
     - jenkinsPlugins2nix
     - Configuration as code
     - Ngrok
-- [x] Flake apps that recognize the secrets and perform necessary operations
+- [x] Associated Groovy libraries
     - cachix push
     - docker push
 - NixOS module: https://github.com/juspay/jenkins-nix-ci/issues/3
