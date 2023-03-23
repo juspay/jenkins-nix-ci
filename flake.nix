@@ -16,7 +16,12 @@
         inputs.flake-root.flakeModule
         ./nix/flake-module.nix
         ./nix/ngrok-outputs.nix
+        ./nix/deploy.nix
       ];
+
+      # TODO: Everything below (including some imports above) should be moved to
+      # ./example
+
       # This produces self.nixosModules.jenkins-master module for NixOS.
       jenkins-nix-ci = {
         # Hardcoded domain spit out by ngrok
@@ -31,32 +36,19 @@
         ];
         plugins-file = "nix/jenkins/plugins.nix";
       };
-      flake = {
-        nixosConfigurations.jenkins-nix-ci = self.nixos-flake.lib.mkLinuxSystem {
-          imports = [
-            inputs.agenix.nixosModules.default
-            self.nixosModules.jenkins-master
-            ./nix/configuration.nix
-            ./nix/ngrok.nix
-          ];
-        };
-        deploy.nodes.jenkins-nix-ci =
-          let
-            ngrokPort = 19112;
-          in
-          {
-            hostname = "0.tcp.in.ngrok.io";
-            sshOpts = [ "-p" (builtins.toString ngrokPort) ];
-            sshUser = "admin";
-            profiles.system = {
-              user = "root";
-              path = inputs.deploy-rs.lib.x86_64-linux.activate.nixos self.nixosConfigurations.jenkins-nix-ci;
-            };
-          };
-      };
-      perSystem = { self', inputs', system, lib, config, pkgs, ... }: {
-        # checks = builtins.mapAttrs (system: deployLib: deployLib.deployChecks self.deploy) inputs.deploy-rs.lib;
 
+      # System configuration
+      flake.nixosConfigurations.jenkins-nix-ci = self.nixos-flake.lib.mkLinuxSystem {
+        imports = [
+          inputs.agenix.nixosModules.default
+          self.nixosModules.jenkins-master
+          ./nix/configuration.nix
+          ./nix/ngrok.nix
+        ];
+      };
+
+      perSystem = { self', inputs', system, lib, config, pkgs, ... }: {
+        formatter = pkgs.nixpkgs-fmt;
         devShells.default = pkgs.mkShell {
           buildInputs = [
             pkgs.nixpkgs-fmt
@@ -71,15 +63,6 @@
           docker-push = pkgs.callPackage ./groovy-library/vars/dockerPush.nix { };
           cachix-push = pkgs.callPackage ./groovy-library/vars/cachixPush.nix { };
         };
-
-        apps = {
-          # Deploy
-          default = {
-            type = "app";
-            program = "${inputs'.deploy-rs.packages.deploy-rs}/bin/deploy";
-          };
-        };
-        formatter = pkgs.nixpkgs-fmt;
       };
     };
 }
