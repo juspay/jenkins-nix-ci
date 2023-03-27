@@ -1,11 +1,6 @@
 { jenkinsPlugins2nix }:
 { flake, pkgs, lib, config, ... }:
 
-let
-  enabledFeatures = lib.filterAttrs (n: v: v.enable) config.jenkins-nix-ci.features;
-  features_packages =
-    lib.concatMap (cfg: cfg.node.packages) (lib.attrValues enabledFeatures);
-in
 {
   imports = [
     ./casc.nix
@@ -77,7 +72,7 @@ in
         coreutils
         which
         nix
-      ] ++ features_packages;
+      ] ++ config.jenkins-nix-ci.feature-outputs.node.packages;
       plugins = import "${flake.self}/${config.jenkins-nix-ci.plugins-file}" {
         inherit (pkgs) fetchurl stdenv;
       };

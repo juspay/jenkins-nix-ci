@@ -1,26 +1,6 @@
 { pkgs, lib, config, ... }:
 
 let
-  enabledFeatures = lib.filterAttrs (n: v: v.enable) config.jenkins-nix-ci.features;
-  features_credentials =
-    lib.concatMap (cfg: cfg.casc.credentials) (lib.attrValues enabledFeatures);
-  features_sopsSecrets =
-    lib.concatMap (cfg: cfg.sopsSecrets) (lib.attrValues enabledFeatures);
-  features_sharedLibrary =
-    let
-      sharedLibraries = lib.concatMap
-        (cfg: if cfg.sharedLibrary == null then [ ] else [ cfg.sharedLibrary ])
-        (lib.attrValues enabledFeatures);
-    in
-    pkgs.buildEnv {
-      name = "jenkins-nix-ci-library-enabled-features";
-      # Just merge the individual libraries, because we expect them to have
-      # `./vars` only.
-      paths = sharedLibraries;
-    };
-
-
-
   # Jenkins doesn't support a local retriever; so we simulate one by
   # piggybacking on its git scm retriever.
   #
@@ -53,7 +33,8 @@ in
 {
   config = {
     # Let jenkins user own the sops secrets associated with enabled features.
-    sops.secrets = lib.foldl (acc: x: acc // { "${x}" = { owner = "jenkins"; }; }) { } features_sopsSecrets;
+    sops.secrets = lib.foldl (acc: x: acc // { "${x}" = { owner = "jenkins"; }; }) { }
+      config.jenkins-nix-ci.feature-outputs.sopsSecrets;
   };
   options.jenkins-nix-ci = lib.mkOption {
     type = lib.types.submodule {
@@ -92,7 +73,7 @@ in
         credentials = {
           system.domainCredentials = [
             {
-              credentials = features_credentials;
+              inherit (config.jenkins-nix-ci.feature-outputs.casc) credentials;
             }
           ];
         };
@@ -114,7 +95,7 @@ in
               implicit = true;
               retriever = localRetriever
                 "jenkins-nix-ci-library"
-                features_sharedLibrary;
+                config.jenkins-nix-ci.feature-outputs.sharedLibrary;
             }
           ];
         };
