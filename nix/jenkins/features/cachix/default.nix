@@ -22,7 +22,7 @@ in
       ];
     };
 
-    sharedLibrary.vars = lib.mkOption {
+    sharedLibrary = lib.mkOption {
       type = types.package;
       default = pkgs.runCommand "cachix-groovy" { } ''
         mkdir -p $out/vars

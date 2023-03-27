@@ -29,9 +29,9 @@ in
       ];
     };
 
-    sharedLibrary.vars = lib.mkOption {
+    sharedLibrary = lib.mkOption {
       type = types.package;
-      default = pkgs.runCommand "dockerPush.groovy" { } ''
+      default = pkgs.runCommand "docker-groovy" { } ''
         mkdir -p $out/vars
         cp ${./dockerPush.groovy} $out/vars/dockerPush.groovy
       '';
