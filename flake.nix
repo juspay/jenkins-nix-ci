@@ -11,7 +11,7 @@
   };
   outputs = inputs@{ flake-parts, ... }:
     flake-parts.lib.mkFlake { inherit inputs; } {
-      flake.nixosModules.default = import ./nix/jenkins.nix { inherit (inputs) jenkinsPlugins2nix; };
+      flake.nixosModules.default = import ./nix/jenkins { inherit (inputs) jenkinsPlugins2nix; };
       # TODO: Move example to independent flake
       imports = [ ./example/nammayatri ];
     };

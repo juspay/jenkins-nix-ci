@@ -3,7 +3,7 @@
 
 {
   imports = [
-    ./jenkins/casc.nix
+    ./casc.nix
   ];
   options.jenkins-nix-ci = lib.mkOption {
     type = lib.types.submodule {
@@ -75,8 +75,8 @@
 
         # Groovy library packages
         cachix
-        (pkgs.callPackage ../groovy-library/vars/cachixPush.nix { inherit pkgs; })
-        (pkgs.callPackage ../groovy-library/vars/dockerPush.nix { inherit pkgs; })
+        (pkgs.callPackage ../../groovy-library/vars/cachixPush.nix { inherit pkgs; })
+        (pkgs.callPackage ../../groovy-library/vars/dockerPush.nix { inherit pkgs; })
       ];
       plugins = import "${flake.self}/${config.jenkins-nix-ci.plugins-file}" {
         inherit (pkgs) fetchurl stdenv;
