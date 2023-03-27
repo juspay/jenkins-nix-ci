@@ -2,5 +2,6 @@
   imports = [
     ./cachix
     ./docker
+    ./githubApp
   ];
 }

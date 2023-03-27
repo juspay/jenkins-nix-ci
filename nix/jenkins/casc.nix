@@ -5,10 +5,16 @@ let
   features_credentials =
     lib.concatMap (cfg: cfg.casc.credentials) (lib.attrValues enabledFeatures);
   features_sharedLibrary =
-    let vars = builtins.map (cfg: cfg.sharedLibrary) (lib.attrValues enabledFeatures);
-    in pkgs.buildEnv {
+    let
+      sharedLibraries = lib.concatMap
+        (cfg: if cfg.sharedLibrary == null then [ ] else [ cfg.sharedLibrary ])
+        (lib.attrValues enabledFeatures);
+    in
+    pkgs.buildEnv {
       name = "jenkins-nix-ci-library-enabled-features";
-      paths = vars;
+      # Just merge the individual libraries, because we expect them to have
+      # `./vars` only.
+      paths = sharedLibraries;
     };
 
   # Functions for working with configuration-as-code-plugin syntax.
@@ -89,18 +95,7 @@ in
         credentials = {
           system.domainCredentials = [
             {
-              credentials = features_credentials ++ [
-                {
-                  # Instructions for creating this Github App are at:
-                  # https://github.com/jenkinsci/github-branch-source-plugin/blob/master/docs/github-app.adoc#configuration-as-code-plugin
-                  githubApp = {
-                    id = "github-app";
-                    appID = casc.readFile config.sops.secrets."jenkins-nix-ci/github-app/appID".path;
-                    description = casc.readFile config.sops.secrets."jenkins-nix-ci/github-app/description".path;
-                    privateKey = casc.readFile config.sops.secrets."jenkins-nix-ci/github-app/privateKey".path;
-                  };
-                }
-              ];
+              credentials = features_credentials;
             }
           ];
         };
