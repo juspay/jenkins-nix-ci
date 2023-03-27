@@ -28,7 +28,7 @@ nix run . -- -s --remote-build
 
 ## Plugins
 
-To update the plugins, run `nix-prefetch-jenkins-plugins > path/to/plugins.nix`
+To update the plugins, run `nix-prefetch-jenkins-plugins > nix/jenkins/plugins.nix`
 
 
 ## Tasks
