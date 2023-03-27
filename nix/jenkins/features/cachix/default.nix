@@ -2,18 +2,21 @@
 
 let
   types = lib.types;
+  casc = config.jenkins-nix-ci.cascLib;
+  secrets = config.sops.secrets;
 in
 {
   options.features.cachix = {
     enable = lib.mkEnableOption "cachix";
+
     casc.credentials = [
-      /* {
+      {
         string = {
           id = "cachix-auth-token";
-          description = casc.readFile config.sops.secrets."jenkins-nix-ci/cachix-auth-token/description".path;
-          secret = casc.readFile config.sops.secrets."jenkins-nix-ci/cachix-auth-token/secret".path;
+          description = casc.readFile secrets."jenkins-nix-ci/cachix-auth-token/description".path;
+          secret = casc.readFile secrets."jenkins-nix-ci/cachix-auth-token/secret".path;
         };
-      } */
+      }
     ];
 
     sharedLibrary.vars = [

@@ -57,6 +57,11 @@ in
   options.jenkins-nix-ci = lib.mkOption {
     type = lib.types.submodule {
       options = {
+        cascLib = lib.mkOption {
+          type = lib.types.attrsOf lib.types.raw;
+          description = "Casc library of functions";
+          default = casc;
+        };
         cascConfig = lib.mkOption {
           type = lib.types.attrs;
           description = ''
