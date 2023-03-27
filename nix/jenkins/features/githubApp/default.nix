@@ -8,6 +8,16 @@ in
   options.features.githubApp = {
     enable = lib.mkEnableOption "githubApp";
 
+    sopsSecrets = lib.mkOption {
+      type = types.listOf types.str;
+      readOnly = true;
+      default = [
+        "jenkins-nix-ci/github-app/appID"
+        "jenkins-nix-ci/github-app/description"
+        "jenkins-nix-ci/github-app/privateKey"
+      ];
+    };
+
     casc.credentials = lib.mkOption {
       type = types.listOf types.attrs;
       readOnly = true;

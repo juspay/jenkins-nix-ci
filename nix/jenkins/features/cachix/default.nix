@@ -8,6 +8,15 @@ in
   options.features.cachix = {
     enable = lib.mkEnableOption "cachix";
 
+    sopsSecrets = lib.mkOption {
+      type = types.listOf types.str;
+      readOnly = true;
+      default = [
+        "jenkins-nix-ci/cachix-auth-token/description"
+        "jenkins-nix-ci/cachix-auth-token/secret"
+      ];
+    };
+
     casc.credentials = lib.mkOption {
       type = types.listOf types.attrs;
       readOnly = true;

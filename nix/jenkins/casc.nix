@@ -4,6 +4,8 @@ let
   enabledFeatures = lib.filterAttrs (n: v: v.enable) config.jenkins-nix-ci.features;
   features_credentials =
     lib.concatMap (cfg: cfg.casc.credentials) (lib.attrValues enabledFeatures);
+  features_sopsSecrets =
+    lib.concatMap (cfg: cfg.sopsSecrets) (lib.attrValues enabledFeatures);
   features_sharedLibrary =
     let
       sharedLibraries = lib.concatMap
@@ -49,16 +51,9 @@ let
     };
 in
 {
-  # TODO: These should be defined based on features.
   config = {
-    sops.secrets."jenkins-nix-ci/cachix-auth-token/description".owner = "jenkins";
-    sops.secrets."jenkins-nix-ci/cachix-auth-token/secret".owner = "jenkins";
-    sops.secrets."jenkins-nix-ci/github-app/appID".owner = "jenkins";
-    sops.secrets."jenkins-nix-ci/github-app/description".owner = "jenkins";
-    sops.secrets."jenkins-nix-ci/github-app/privateKey".owner = "jenkins";
-    sops.secrets."jenkins-nix-ci/docker-login/description".owner = "jenkins";
-    sops.secrets."jenkins-nix-ci/docker-login/user".owner = "jenkins";
-    sops.secrets."jenkins-nix-ci/docker-login/pass".owner = "jenkins";
+    # Let jenkins user own the sops secrets associated with enabled features.
+    sops.secrets = lib.foldl (acc: x: acc // { "${x}" = { owner = "jenkins"; }; }) { } features_sopsSecrets;
   };
   options.jenkins-nix-ci = lib.mkOption {
     type = lib.types.submodule {

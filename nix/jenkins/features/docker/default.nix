@@ -8,6 +8,16 @@ in
   options.features.docker = {
     enable = lib.mkEnableOption "docker";
 
+    sopsSecrets = lib.mkOption {
+      type = types.listOf types.str;
+      readOnly = true;
+      default = [
+        "jenkins-nix-ci/docker-login/description"
+        "jenkins-nix-ci/docker-login/user"
+        "jenkins-nix-ci/docker-login/pass"
+      ];
+    };
+
     casc.credentials = lib.mkOption {
       type = types.listOf types.attrs;
       readOnly = true;
