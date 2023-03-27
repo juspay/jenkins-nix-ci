@@ -1,11 +1,12 @@
-{ lib, pkgs, config, secrets, ... }:
+{ lib, pkgs, config, ... }:
 
 let
   types = lib.types;
-  casc = config.cascLib;
+  casc = config.jenkins-nix-ci.cascLib;
+  secrets = config.sops.secrets;
 in
 {
-  options.features.docker = {
+  options.jenkins-nix-ci.features.docker = {
     enable = lib.mkEnableOption "docker";
 
     sopsSecrets = lib.mkOption {

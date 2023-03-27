@@ -1,11 +1,12 @@
-{ lib, pkgs, config, secrets, ... }:
+{ lib, pkgs, config, ... }:
 
 let
   types = lib.types;
-  casc = config.cascLib;
+  casc = config.jenkins-nix-ci.cascLib;
+  secrets = config.sops.secrets;
 in
 {
-  options.features.cachix = {
+  options.jenkins-nix-ci.features.cachix = {
     enable = lib.mkEnableOption "cachix";
 
     sopsSecrets = lib.mkOption {

@@ -1,11 +1,12 @@
-{ lib, config, secrets, ... }:
+{ lib, config, ... }:
 
 let
   types = lib.types;
-  casc = config.cascLib;
+  casc = config.jenkins-nix-ci.cascLib;
+  secrets = config.sops.secrets;
 in
 {
-  options.features.githubApp = {
+  options.jenkins-nix-ci.features.githubApp = {
     enable = lib.mkEnableOption "githubApp";
 
     sopsSecrets = lib.mkOption {
