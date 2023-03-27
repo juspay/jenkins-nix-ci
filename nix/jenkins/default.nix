@@ -86,10 +86,6 @@ in
         coreutils
         which
         nix
-        docker
-
-        # Groovy library packages
-        (pkgs.callPackage ../../groovy-library/vars/dockerPush.nix { inherit pkgs; })
       ] ++ features_packages;
       plugins = import "${flake.self}/${config.jenkins-nix-ci.plugins-file}" {
         inherit (pkgs) fetchurl stdenv;

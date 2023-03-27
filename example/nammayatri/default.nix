@@ -31,7 +31,10 @@
           #   nix-prefetch-jenkins-plugins > nix/jenkins/plugins.nix
           plugins-file = "example/nammayatri/nix/jenkins-plugins.nix";
 
-          features.cachix.enable = true;
+          features = {
+            cachix.enable = true;
+            docker.enable = true;
+          };
         };
       })
 

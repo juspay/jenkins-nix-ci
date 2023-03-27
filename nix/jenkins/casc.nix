@@ -94,20 +94,6 @@ in
                     privateKey = casc.readFile config.sops.secrets."jenkins-nix-ci/github-app/privateKey".path;
                   };
                 }
-                {
-                  string = {
-                    id = "docker-user";
-                    description = casc.readFile config.sops.secrets."jenkins-nix-ci/docker-login/description".path + " User";
-                    secret = casc.readFile config.sops.secrets."jenkins-nix-ci/docker-login/user".path;
-                  };
-                }
-                {
-                  string = {
-                    id = "docker-pass";
-                    description = casc.readFile config.sops.secrets."jenkins-nix-ci/docker-login/description".path + " Password";
-                    secret = casc.readFile config.sops.secrets."jenkins-nix-ci/docker-login/pass".path;
-                  };
-                }
               ];
             }
           ];

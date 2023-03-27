@@ -22,9 +22,12 @@ in
       ];
     };
 
-    sharedLibrary.vars = [
-      ../../../../groovy-library/cachixPush.groovy
-    ];
+    sharedLibrary.vars = lib.mkOption {
+      type = types.listOf types.path;
+      default = [
+        ../../../../groovy-library/cachixPush.groovy
+      ];
+    };
 
     node.packages = lib.mkOption {
       type = types.listOf types.package;
