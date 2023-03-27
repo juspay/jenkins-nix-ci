@@ -79,7 +79,7 @@ in
                   string = {
                     id = "cachix-auth-token";
                     description = "nammayatri.cachix.org auth token";
-                    secret = casc.json "value" (casc.readFile config.age.secrets.cachix-token.path);
+                    secret = casc.readFile config.sops.secrets.cachix_token.path;
                   };
                 }
                 {
