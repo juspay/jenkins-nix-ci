@@ -24,6 +24,7 @@ in
 
     sharedLibrary = lib.mkOption {
       type = types.package;
+      readOnly = true;
       default = pkgs.runCommand "cachix-groovy" { } ''
         mkdir -p $out/vars
         cp ${./cachixUse.groovy} $out/vars/cachixUse.groovy
@@ -36,7 +37,7 @@ in
       readOnly = true;
       default = [
         pkgs.cachix
-        (pkgs.callPackage ../../../../groovy-library/vars/cachixPush.nix { inherit pkgs; })
+        (pkgs.callPackage ./cachixPush.nix { })
       ];
     };
   };

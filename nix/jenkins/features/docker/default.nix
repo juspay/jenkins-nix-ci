@@ -31,6 +31,7 @@ in
 
     sharedLibrary = lib.mkOption {
       type = types.package;
+      readOnly = true;
       default = pkgs.runCommand "docker-groovy" { } ''
         mkdir -p $out/vars
         cp ${./dockerPush.groovy} $out/vars/dockerPush.groovy
@@ -42,7 +43,7 @@ in
       readOnly = true;
       default = [
         pkgs.docker
-        (pkgs.callPackage ../../../../groovy-library/vars/dockerPush.nix { inherit pkgs; })
+        (pkgs.callPackage ./dockerPush.nix { })
       ];
     };
   };
