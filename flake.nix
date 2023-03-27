@@ -2,7 +2,6 @@
   inputs = {
     nixpkgs.url = "github:nixos/nixpkgs/nixos-unstable";
     flake-parts.url = "github:hercules-ci/flake-parts";
-    flake-root.url = "github:srid/flake-root";
     deploy-rs.url = "github:serokell/deploy-rs";
     jenkinsPlugins2nix.url = "github:Fuuzetsu/jenkinsPlugins2nix";
     nixos-flake.url = "github:srid/nixos-flake";
@@ -13,7 +12,6 @@
       systems = inputs.nixpkgs.lib.systems.flakeExposed;
       imports = [
         inputs.nixos-flake.flakeModule
-        inputs.flake-root.flakeModule
         ./nix/ngrok-outputs.nix
         ./nix/deploy.nix
       ];
