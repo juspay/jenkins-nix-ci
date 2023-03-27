@@ -1,3 +1,4 @@
+{ jenkinsPlugins2nix }:
 { flake, pkgs, lib, config, ... }:
 
 {
@@ -36,13 +37,13 @@
             let
               jenkinsPlugins2nix_system =
                 if pkgs.system == "aarch64-darwin" then "x86_64-darwin" else pkgs.system;
-              jenkinsPlugins2nix = flake.inputs.jenkinsPlugins2nix.packages.${jenkinsPlugins2nix_system}.jenkinsPlugins2nix;
+              fetcher = jenkinsPlugins2nix.packages.${jenkinsPlugins2nix_system}.jenkinsPlugins2nix;
               inherit (config.jenkins-nix-ci) plugins;
             in
             pkgs.writeShellApplication {
               name = "nix-prefetch-jenkins-plugins";
               text = ''
-                ${lib.getExe jenkinsPlugins2nix} \
+                ${lib.getExe fetcher} \
                   ${lib.foldl (a: b: "${a} -p ${b}") "" plugins}
               '';
             };

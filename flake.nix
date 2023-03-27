@@ -9,25 +9,24 @@
   };
   outputs = inputs@{ self, flake-parts, ... }:
     flake-parts.lib.mkFlake { inherit inputs; } {
+      flake.nixosModules.default = import ./nix/jenkins.nix { inherit (inputs) jenkinsPlugins2nix; };
+
+      # TODO: Everything below (including some imports above) should be moved to
+      # ./example
+
       systems = inputs.nixpkgs.lib.systems.flakeExposed;
       imports = [
         inputs.nixos-flake.flakeModule
         ./nix/ngrok-outputs.nix
         ./nix/deploy.nix
       ];
-
-      flake.nixosModules.default = ./nix/jenkins.nix;
-
-      # TODO: Everything below (including some imports above) should be moved to
-      # ./example
-
       # System configuration
       flake.nixosConfigurations.jenkins-nix-ci = self.nixos-flake.lib.mkLinuxSystem ({ pkgs, config, ... }: {
         imports = [
           inputs.sops-nix.nixosModules.sops
 
-          # Jenkins 
-          ./nix/jenkins.nix
+          # Jenkins module usage
+          self.nixosModules.default
           ({
             jenkins-nix-ci = {
               # Hardcoded domain spit out by ngrok
