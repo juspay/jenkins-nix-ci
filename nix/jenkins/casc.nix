@@ -17,18 +17,7 @@ let
       paths = sharedLibraries;
     };
 
-  # Functions for working with configuration-as-code-plugin syntax.
-  # https://github.com/jenkinsci/configuration-as-code-plugin/blob/master/docs/features/secrets.adoc#additional-variable-substitution
-  casc = {
-    # This is useful when reading secrets decrypted by sops-nix.
-    # Never use builtins.readFile, https://github.com/ryantm/agenix#builtinsreadfile-anti-pattern
-    readFile = path:
-      "$" + "{readFile:" + path + "}";
-    # Parse the string secret as JSON, then extract the value for the specified <key>.
-    # https://github.com/jenkinsci/configuration-as-code-plugin/blob/master/docs/features/secrets.adoc#json
-    json = key: x:
-      "$" + "{json:" + key + ":" + x + "}";
-  };
+
 
   # Jenkins doesn't support a local retriever; so we simulate one by
   # piggybacking on its git scm retriever.
@@ -60,6 +49,7 @@ let
     };
 in
 {
+  # TODO: These should be defined based on features.
   config = {
     sops.secrets."jenkins-nix-ci/cachix-auth-token/description".owner = "jenkins";
     sops.secrets."jenkins-nix-ci/cachix-auth-token/secret".owner = "jenkins";
@@ -75,8 +65,21 @@ in
       options = {
         cascLib = lib.mkOption {
           type = lib.types.attrsOf lib.types.raw;
-          description = "Casc library of functions";
-          default = casc;
+          readOnly = true;
+          description = ''
+            Functions for working with configuration-as-code-plugin syntax.
+            https://github.com/jenkinsci/configuration-as-code-plugin/blob/master/docs/features/secrets.adoc#additional-variable-substitution
+          '';
+          default = {
+            # This is useful when reading secrets decrypted by sops-nix.
+            # Never use builtins.readFile, https://github.com/ryantm/agenix#builtinsreadfile-anti-pattern
+            readFile = path:
+              "$" + "{readFile:" + path + "}";
+            # Parse the string secret as JSON, then extract the value for the specified <key>.
+            # https://github.com/jenkinsci/configuration-as-code-plugin/blob/master/docs/features/secrets.adoc#json
+            json = key: x:
+              "$" + "{json:" + key + ":" + x + "}";
+          };
         };
         cascConfig = lib.mkOption {
           type = lib.types.attrs;
@@ -90,7 +93,6 @@ in
           '';
         };
       };
-      # TODO: Build cascConfig based on the parametrized options in flake-parts module
       config.cascConfig = {
         credentials = {
           system.domainCredentials = [
