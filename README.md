@@ -30,22 +30,7 @@ nix run . -- -s --remote-build
 
 To update the plugins, run `nix-prefetch-jenkins-plugins > nix/jenkins/plugins.nix`
 
-
-## Tasks
-
-- [x] Initial Jenkins config
-    - jenkinsPlugins2nix
-    - Configuration as code
-    - Ngrok
-- [x] Associated Groovy libraries (served from the nix store)
-    - cachix push
-    - docker push
-- [ ] NixOS module: https://github.com/juspay/jenkins-nix-ci/issues/3
-- [ ] Separate build slave for Linux
-- [ ] Separate build slave for macOS (nix-darwin)
-
-
-### sops
+## Secrets
 
 We use sops-nix to manage secrets. Convert your SSH key (ed25519) to age, which sops uses. With macOS & 1Password, this would look like:
 
@@ -55,6 +40,22 @@ nix run nixpkgs#ssh-to-age -- --private-key -i <(op read 'op://Personal/id_ed255
 # ^ $HOME/Library/Application\ Support/sops/age/keys.txt actually
 ```
 
-You also want to get the host key (`ssh-keyscan ... | ssh-to-age`).
+You also want to get the host key (`ssh-keyscan localhost | ssh-to-age`).
 
 Put both these public age keys in `.sops.yaml`.
+
+## Progress
+
+- [x] Initial Jenkins config
+    - jenkinsPlugins2nix
+    - Configuration as code
+    - Ngrok
+- [x] Associated Groovy libraries (served from the nix store)
+    - cachix push
+    - docker push
+- [ ] NixOS module: https://github.com/juspay/jenkins-nix-ci/issues/3
+    - casc creds
+- [ ] Separate build slave for Linux
+- [ ] Separate build slave for macOS (nix-darwin)
+
+
