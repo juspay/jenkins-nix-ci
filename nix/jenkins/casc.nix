@@ -44,6 +44,16 @@ let
     };
 in
 {
+  config = {
+    sops.secrets."jenkins-nix-ci/cachix-auth-token/description".owner = "jenkins";
+    sops.secrets."jenkins-nix-ci/cachix-auth-token/secret".owner = "jenkins";
+    sops.secrets."jenkins-nix-ci/github-app/appID".owner = "jenkins";
+    sops.secrets."jenkins-nix-ci/github-app/description".owner = "jenkins";
+    sops.secrets."jenkins-nix-ci/github-app/privateKey".owner = "jenkins";
+    sops.secrets."jenkins-nix-ci/docker-login/description".owner = "jenkins";
+    sops.secrets."jenkins-nix-ci/docker-login/user".owner = "jenkins";
+    sops.secrets."jenkins-nix-ci/docker-login/pass".owner = "jenkins";
+  };
   options.jenkins-nix-ci = lib.mkOption {
     type = lib.types.submodule {
       options = {

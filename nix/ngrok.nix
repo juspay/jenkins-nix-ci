@@ -1,6 +1,8 @@
 { pkgs, config, ... }:
 
 {
+  sops.secrets."ngrok-tokens/shivaraj".owner = "root";
+
   environment.systemPackages = [ pkgs.ngrok ];
 
   system.activationScripts = {

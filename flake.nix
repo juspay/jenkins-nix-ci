@@ -46,16 +46,7 @@
           ./nix/ngrok.nix
         ];
         sops.defaultSopsFile = ./secrets.yaml;
-        sops.secrets."ngrok-tokens/shivaraj".owner = "root";
 
-        sops.secrets."jenkins-nix-ci/cachix-auth-token/description".owner = "jenkins";
-        sops.secrets."jenkins-nix-ci/cachix-auth-token/secret".owner = "jenkins";
-        sops.secrets."jenkins-nix-ci/github-app/appID".owner = "jenkins";
-        sops.secrets."jenkins-nix-ci/github-app/description".owner = "jenkins";
-        sops.secrets."jenkins-nix-ci/github-app/privateKey".owner = "jenkins";
-        sops.secrets."jenkins-nix-ci/docker-login/description".owner = "jenkins";
-        sops.secrets."jenkins-nix-ci/docker-login/user".owner = "jenkins";
-        sops.secrets."jenkins-nix-ci/docker-login/pass".owner = "jenkins";
       });
 
       perSystem = { self', inputs', system, lib, config, pkgs, ... }: {
