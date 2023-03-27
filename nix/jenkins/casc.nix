@@ -1,6 +1,10 @@
 { pkgs, lib, config, ... }:
 
 let
+  enabledFeatures = lib.filterAttrs (n: v: v.enable) config.jenkins-nix-ci.features;
+  features_credentials =
+    lib.concatMap (cfg: cfg.casc.credentials) (lib.attrValues enabledFeatures);
+
   # Functions for working with configuration-as-code-plugin syntax.
   # https://github.com/jenkinsci/configuration-as-code-plugin/blob/master/docs/features/secrets.adoc#additional-variable-substitution
   casc = {
@@ -79,7 +83,7 @@ in
         credentials = {
           system.domainCredentials = [
             {
-              credentials = [
+              credentials = features_credentials ++ [
                 {
                   # Instructions for creating this Github App are at:
                   # https://github.com/jenkinsci/github-branch-source-plugin/blob/master/docs/github-app.adoc#configuration-as-code-plugin
@@ -88,13 +92,6 @@ in
                     appID = casc.readFile config.sops.secrets."jenkins-nix-ci/github-app/appID".path;
                     description = casc.readFile config.sops.secrets."jenkins-nix-ci/github-app/description".path;
                     privateKey = casc.readFile config.sops.secrets."jenkins-nix-ci/github-app/privateKey".path;
-                  };
-                }
-                {
-                  string = {
-                    id = "cachix-auth-token";
-                    description = casc.readFile config.sops.secrets."jenkins-nix-ci/cachix-auth-token/description".path;
-                    secret = casc.readFile config.sops.secrets."jenkins-nix-ci/cachix-auth-token/secret".path;
                   };
                 }
                 {

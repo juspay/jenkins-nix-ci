@@ -2,9 +2,9 @@
 { flake, pkgs, lib, config, ... }:
 
 let
-  features_packages = lib.optionals
-    config.jenkins-nix-ci.features.cachix.enable
-    config.jenkins-nix-ci.features.cachix.node.packages;
+  enabledFeatures = lib.filterAttrs (n: v: v.enable) config.jenkins-nix-ci.features;
+  features_packages =
+    lib.concatMap (cfg: cfg.node.packages) (lib.attrValues enabledFeatures);
 in
 {
   imports = [
@@ -13,7 +13,10 @@ in
   options.jenkins-nix-ci = lib.mkOption {
     type = lib.types.submoduleWith {
       shorthandOnlyDefinesConfig = true;
-      specialArgs = { inherit pkgs lib; };
+      specialArgs = {
+        inherit pkgs lib;
+        inherit (config.sops) secrets;
+      };
       modules = [
         ./features
         {
@@ -86,10 +89,8 @@ in
         docker
 
         # Groovy library packages
-        cachix
-        (pkgs.callPackage ../../groovy-library/vars/cachixPush.nix { inherit pkgs; })
         (pkgs.callPackage ../../groovy-library/vars/dockerPush.nix { inherit pkgs; })
-      ] ++ builtins.trace features_packages features_packages;
+      ] ++ features_packages;
       plugins = import "${flake.self}/${config.jenkins-nix-ci.plugins-file}" {
         inherit (pkgs) fetchurl stdenv;
       };
