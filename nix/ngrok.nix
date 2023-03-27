@@ -1,18 +1,13 @@
 { pkgs, config, ... }:
 
 {
-  age.secrets.ngrok-token = {
-    owner = "root";
-    file = ../secrets/ngrok-token.age;
-  };
-
   environment.systemPackages = [ pkgs.ngrok ];
 
   system.activationScripts = {
     ngrokStartup =
       let
         tmux = "${pkgs.tmux}/bin/tmux";
-        ngrokTokenFile = config.age.secrets.ngrok-token.path;
+        ngrokTokenFile = config.sops.secrets."ngrok-tokens/shivaraj".path;
       in
       {
         text = ''

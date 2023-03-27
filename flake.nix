@@ -48,6 +48,8 @@
           ./nix/ngrok.nix
         ];
         sops.defaultSopsFile = ./secrets.yaml;
+        sops.secrets."ngrok-tokens/shivaraj".owner = "root";
+
         sops.secrets."jenkins-nix-ci/cachix-auth-token/description".owner = "jenkins";
         sops.secrets."jenkins-nix-ci/cachix-auth-token/secret".owner = "jenkins";
         sops.secrets."jenkins-nix-ci/github-app/appID".owner = "jenkins";
