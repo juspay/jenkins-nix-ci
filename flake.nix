@@ -4,9 +4,9 @@
     flake-parts.url = "github:hercules-ci/flake-parts";
     flake-root.url = "github:srid/flake-root";
     deploy-rs.url = "github:serokell/deploy-rs";
-    agenix.url = "github:ryantm/agenix";
     jenkinsPlugins2nix.url = "github:Fuuzetsu/jenkinsPlugins2nix";
     nixos-flake.url = "github:srid/nixos-flake";
+    sops-nix.url = "github:Mic92/sops-nix";
   };
   outputs = inputs@{ self, flake-parts, ... }:
     flake-parts.lib.mkFlake { inherit inputs; } {
@@ -38,14 +38,16 @@
       };
 
       # System configuration
-      flake.nixosConfigurations.jenkins-nix-ci = self.nixos-flake.lib.mkLinuxSystem {
+      flake.nixosConfigurations.jenkins-nix-ci = self.nixos-flake.lib.mkLinuxSystem ({ pkgs, config, ... }: {
         imports = [
-          inputs.agenix.nixosModules.default
+          inputs.sops-nix.nixosModules.sops
           self.nixosModules.jenkins-master
           ./nix/configuration.nix
           ./nix/ngrok.nix
         ];
-      };
+        sops.defaultSopsFile = ./secrets.yaml;
+
+      });
 
       perSystem = { self', inputs', system, lib, config, pkgs, ... }: {
         formatter = pkgs.nixpkgs-fmt;
@@ -53,7 +55,7 @@
           buildInputs = [
             pkgs.nixpkgs-fmt
             inputs'.deploy-rs.packages.default
-            inputs'.agenix.packages.agenix
+            pkgs.sops
           ];
         };
 

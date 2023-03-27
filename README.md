@@ -37,3 +37,18 @@ nix run . -- -s --remote-build
 - [ ] NixOS module: https://github.com/juspay/jenkins-nix-ci/issues/3
 - [ ] Separate build slave for Linux
 - [ ] Separate build slave for macOS (nix-darwin)
+
+
+### sops
+
+We use sops-nix to manage secrets. Convert your SSH key (ed25519) to age, which sops uses. With macOS & 1Password, this would look like:
+
+```
+nix run nixpkgs#ssh-to-age  <<< "$(op read 'op://Personal/id_ed25519/public key')"
+nix run nixpkgs#ssh-to-age -- --private-key -i <(op read 'op://Personal/id_ed25519/actual private') > ~/.config/sops/age/keys.txt
+# ^ $HOME/Library/Application\ Support/sops/age/keys.txt actually
+```
+
+You also want to get the host key (`ssh-keyscan ... | ssh-to-age`).
+
+Put both these public age keys in `.sops.yaml`.

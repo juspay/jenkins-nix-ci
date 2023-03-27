@@ -4,7 +4,7 @@ let
   # Functions for working with configuration-as-code-plugin syntax.
   # https://github.com/jenkinsci/configuration-as-code-plugin/blob/master/docs/features/secrets.adoc#additional-variable-substitution
   casc = {
-    # This is useful when reading secrets decrypted by agenix.
+    # This is useful when reading secrets decrypted by sops-nix.
     # Never use builtins.readFile, https://github.com/ryantm/agenix#builtinsreadfile-anti-pattern
     readFile = path:
       "$" + "{readFile:" + path + "}";
@@ -44,6 +44,16 @@ let
     };
 in
 {
+  config = {
+    sops.secrets."jenkins-nix-ci/cachix-auth-token/description".owner = "jenkins";
+    sops.secrets."jenkins-nix-ci/cachix-auth-token/secret".owner = "jenkins";
+    sops.secrets."jenkins-nix-ci/github-app/appID".owner = "jenkins";
+    sops.secrets."jenkins-nix-ci/github-app/description".owner = "jenkins";
+    sops.secrets."jenkins-nix-ci/github-app/privateKey".owner = "jenkins";
+    sops.secrets."jenkins-nix-ci/docker-login/description".owner = "jenkins";
+    sops.secrets."jenkins-nix-ci/docker-login/user".owner = "jenkins";
+    sops.secrets."jenkins-nix-ci/docker-login/pass".owner = "jenkins";
+  };
   options.jenkins-nix-ci = lib.mkOption {
     type = lib.types.submodule {
       options = {
@@ -69,31 +79,31 @@ in
                   # Instructions for creating this Github App are at:
                   # https://github.com/jenkinsci/github-branch-source-plugin/blob/master/docs/github-app.adoc#configuration-as-code-plugin
                   githubApp = {
-                    appID = "308117";
-                    description = "Github App - jenkins-nammayatri";
                     id = "github-app";
-                    privateKey = casc.readFile config.age.secrets.github-app-pem.path;
+                    appID = casc.readFile config.sops.secrets."jenkins-nix-ci/github-app/appID".path;
+                    description = casc.readFile config.sops.secrets."jenkins-nix-ci/github-app/description".path;
+                    privateKey = casc.readFile config.sops.secrets."jenkins-nix-ci/github-app/privateKey".path;
                   };
                 }
                 {
                   string = {
                     id = "cachix-auth-token";
-                    description = "nammayatri.cachix.org auth token";
-                    secret = casc.json "value" (casc.readFile config.age.secrets.cachix-token.path);
+                    description = casc.readFile config.sops.secrets."jenkins-nix-ci/cachix-auth-token/description".path;
+                    secret = casc.readFile config.sops.secrets."jenkins-nix-ci/cachix-auth-token/secret".path;
                   };
                 }
                 {
                   string = {
                     id = "docker-user";
-                    description = "Docker user";
-                    secret = casc.json "user" (casc.readFile config.age.secrets.docker-login.path);
+                    description = casc.readFile config.sops.secrets."jenkins-nix-ci/docker-login/description".path + " User";
+                    secret = casc.readFile config.sops.secrets."jenkins-nix-ci/docker-login/user".path;
                   };
                 }
                 {
                   string = {
                     id = "docker-pass";
-                    description = "Docker password";
-                    secret = casc.json "pass" (casc.readFile config.age.secrets.docker-login.path);
+                    description = casc.readFile config.sops.secrets."jenkins-nix-ci/docker-login/description".path + " Password";
+                    secret = casc.readFile config.sops.secrets."jenkins-nix-ci/docker-login/pass".path;
                   };
                 }
               ];

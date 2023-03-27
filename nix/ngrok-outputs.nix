@@ -20,6 +20,22 @@
           });
       };
 
+      hostkey = {
+        type = "app";
+        program =
+          let
+            inherit (self.deploy.nodes.jenkins-nix-ci) sshOpts sshUser hostname;
+          in
+          lib.getExe (pkgs.writeShellApplication {
+            name = "hostkey-jenkins-nix-ci";
+            runtimeInputs = [ pkgs.ssh-to-age ];
+            text = ''
+              ssh-keyscan ${lib.concatStringsSep " " sshOpts} ${sshUser}@${hostname} | \
+                ssh-to-age
+            '';
+          });
+      };
+
       # Exposes Jenkins service in http://localhost:8081
       # (Also drops you into the SSH session)
       port-forward = {

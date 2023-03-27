@@ -5,19 +5,6 @@
     ./jenkins/casc.nix
   ];
   config = {
-    age.secrets.docker-login = {
-      owner = "jenkins";
-      file = flake.self + /secrets/docker-login.age;
-    };
-    age.secrets.github-app-pem = {
-      owner = "jenkins";
-      file = flake.self + /secrets/github-app-pem.age;
-    };
-    age.secrets.cachix-token = {
-      owner = "jenkins";
-      file = flake.self + /secrets/cachix-token.age;
-    };
-
     services.jenkins = {
       enable = true;
       inherit (flake.config.jenkins-nix-ci) port;
