@@ -69,31 +69,31 @@ in
                   # Instructions for creating this Github App are at:
                   # https://github.com/jenkinsci/github-branch-source-plugin/blob/master/docs/github-app.adoc#configuration-as-code-plugin
                   githubApp = {
-                    appID = "308117";
-                    description = "Github App - jenkins-nammayatri";
                     id = "github-app";
-                    privateKey = casc.readFile config.age.secrets.github-app-pem.path;
+                    appID = casc.readFile config.sops.secrets."jenkins-nix-ci/github-app/appID".path;
+                    description = casc.readFile config.sops.secrets."jenkins-nix-ci/github-app/description".path;
+                    privateKey = casc.readFile config.sops.secrets."jenkins-nix-ci/github-app/privateKey".path;
                   };
                 }
                 {
                   string = {
                     id = "cachix-auth-token";
-                    description = "nammayatri.cachix.org auth token";
-                    secret = casc.readFile config.sops.secrets.cachix_token.path;
+                    description = casc.readFile config.sops.secrets."jenkins-nix-ci/cachix-auth-token/description".path;
+                    secret = casc.readFile config.sops.secrets."jenkins-nix-ci/cachix-auth-token/secret".path;
                   };
                 }
                 {
                   string = {
                     id = "docker-user";
-                    description = "Docker user";
-                    secret = casc.json "user" (casc.readFile config.age.secrets.docker-login.path);
+                    description = casc.readFile config.sops.secrets."jenkins-nix-ci/docker-login/description".path + " User";
+                    secret = casc.readFile config.sops.secrets."jenkins-nix-ci/docker-login/user".path;
                   };
                 }
                 {
                   string = {
                     id = "docker-pass";
-                    description = "Docker password";
-                    secret = casc.json "pass" (casc.readFile config.age.secrets.docker-login.path);
+                    description = casc.readFile config.sops.secrets."jenkins-nix-ci/docker-login/description".path + " Password";
+                    secret = casc.readFile config.sops.secrets."jenkins-nix-ci/docker-login/pass".path;
                   };
                 }
               ];
