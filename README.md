@@ -25,6 +25,12 @@ nix run . -- -s --remote-build
 
 (The `deploy` command is also available in the devshell)
 
+
+## Plugins
+
+To update the plugins, run `nix-prefetch-jenkins-plugins > nix/jenkins/plugins.nix`
+
+
 ## Tasks
 
 - [x] Initial Jenkins config
