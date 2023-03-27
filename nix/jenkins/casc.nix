@@ -1,19 +1,6 @@
 { pkgs, lib, config, ... }:
 
 let
-  # Functions for working with configuration-as-code-plugin syntax.
-  # https://github.com/jenkinsci/configuration-as-code-plugin/blob/master/docs/features/secrets.adoc#additional-variable-substitution
-  casc = {
-    # This is useful when reading secrets decrypted by sops-nix.
-    # Never use builtins.readFile, https://github.com/ryantm/agenix#builtinsreadfile-anti-pattern
-    readFile = path:
-      "$" + "{readFile:" + path + "}";
-    # Parse the string secret as JSON, then extract the value for the specified <key>.
-    # https://github.com/jenkinsci/configuration-as-code-plugin/blob/master/docs/features/secrets.adoc#json
-    json = key: x:
-      "$" + "{json:" + key + ":" + x + "}";
-  };
-
   # Jenkins doesn't support a local retriever; so we simulate one by
   # piggybacking on its git scm retriever.
   #
@@ -45,18 +32,31 @@ let
 in
 {
   config = {
-    sops.secrets."jenkins-nix-ci/cachix-auth-token/description".owner = "jenkins";
-    sops.secrets."jenkins-nix-ci/cachix-auth-token/secret".owner = "jenkins";
-    sops.secrets."jenkins-nix-ci/github-app/appID".owner = "jenkins";
-    sops.secrets."jenkins-nix-ci/github-app/description".owner = "jenkins";
-    sops.secrets."jenkins-nix-ci/github-app/privateKey".owner = "jenkins";
-    sops.secrets."jenkins-nix-ci/docker-login/description".owner = "jenkins";
-    sops.secrets."jenkins-nix-ci/docker-login/user".owner = "jenkins";
-    sops.secrets."jenkins-nix-ci/docker-login/pass".owner = "jenkins";
+    # Let jenkins user own the sops secrets associated with enabled features.
+    sops.secrets = lib.foldl (acc: x: acc // { "${x}" = { owner = "jenkins"; }; }) { }
+      config.jenkins-nix-ci.feature-outputs.sopsSecrets;
   };
   options.jenkins-nix-ci = lib.mkOption {
     type = lib.types.submodule {
       options = {
+        cascLib = lib.mkOption {
+          type = lib.types.attrsOf lib.types.raw;
+          readOnly = true;
+          description = ''
+            Functions for working with configuration-as-code-plugin syntax.
+            https://github.com/jenkinsci/configuration-as-code-plugin/blob/master/docs/features/secrets.adoc#additional-variable-substitution
+          '';
+          default = {
+            # This is useful when reading secrets decrypted by sops-nix.
+            # Never use builtins.readFile, https://github.com/ryantm/agenix#builtinsreadfile-anti-pattern
+            readFile = path:
+              "$" + "{readFile:" + path + "}";
+            # Parse the string secret as JSON, then extract the value for the specified <key>.
+            # https://github.com/jenkinsci/configuration-as-code-plugin/blob/master/docs/features/secrets.adoc#json
+            json = key: x:
+              "$" + "{json:" + key + ":" + x + "}";
+          };
+        };
         cascConfig = lib.mkOption {
           type = lib.types.attrs;
           description = ''
@@ -69,44 +69,11 @@ in
           '';
         };
       };
-      # TODO: Build cascConfig based on the parametrized options in flake-parts module
       config.cascConfig = {
         credentials = {
           system.domainCredentials = [
             {
-              credentials = [
-                {
-                  # Instructions for creating this Github App are at:
-                  # https://github.com/jenkinsci/github-branch-source-plugin/blob/master/docs/github-app.adoc#configuration-as-code-plugin
-                  githubApp = {
-                    id = "github-app";
-                    appID = casc.readFile config.sops.secrets."jenkins-nix-ci/github-app/appID".path;
-                    description = casc.readFile config.sops.secrets."jenkins-nix-ci/github-app/description".path;
-                    privateKey = casc.readFile config.sops.secrets."jenkins-nix-ci/github-app/privateKey".path;
-                  };
-                }
-                {
-                  string = {
-                    id = "cachix-auth-token";
-                    description = casc.readFile config.sops.secrets."jenkins-nix-ci/cachix-auth-token/description".path;
-                    secret = casc.readFile config.sops.secrets."jenkins-nix-ci/cachix-auth-token/secret".path;
-                  };
-                }
-                {
-                  string = {
-                    id = "docker-user";
-                    description = casc.readFile config.sops.secrets."jenkins-nix-ci/docker-login/description".path + " User";
-                    secret = casc.readFile config.sops.secrets."jenkins-nix-ci/docker-login/user".path;
-                  };
-                }
-                {
-                  string = {
-                    id = "docker-pass";
-                    description = casc.readFile config.sops.secrets."jenkins-nix-ci/docker-login/description".path + " Password";
-                    secret = casc.readFile config.sops.secrets."jenkins-nix-ci/docker-login/pass".path;
-                  };
-                }
-              ];
+              inherit (config.jenkins-nix-ci.feature-outputs.casc) credentials;
             }
           ];
         };
@@ -128,7 +95,7 @@ in
               implicit = true;
               retriever = localRetriever
                 "jenkins-nix-ci-library"
-                ../../groovy-library;
+                config.jenkins-nix-ci.feature-outputs.sharedLibrary;
             }
           ];
         };
