@@ -44,8 +44,7 @@ in
     node.packages = lib.mkOption {
       type = types.listOf types.package;
       readOnly = true;
-      default = [
-      ];
+      default = [ ];
     };
   };
 }

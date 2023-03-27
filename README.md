@@ -55,6 +55,7 @@ Put both these public age keys in `.sops.yaml`.
     - docker push
 - [ ] NixOS module: https://github.com/juspay/jenkins-nix-ci/issues/3
     - casc creds
+    - features system
 - [ ] Separate build slave for Linux
 - [ ] Separate build slave for macOS (nix-darwin)
 

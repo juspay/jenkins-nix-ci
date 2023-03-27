@@ -107,7 +107,7 @@ in
     nix.settings.trusted-users = [ "jenkins" ];
 
     # Install docker so we can build images.
-    virtualisation.docker.enable = true;
-    services.jenkins.extraGroups = [ "docker" ];
+    virtualisation.docker.enable = lib.mkIf config.jenkins-nix-ci.features.docker.enable true;
+    services.jenkins.extraGroups = lib.optionals config.jenkins-nix-ci.features.docker.enable [ "docker" ];
   };
 }
