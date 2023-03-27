@@ -10,6 +10,7 @@ in
 
     casc.credentials = lib.mkOption {
       type = types.listOf types.attrs;
+      readOnly = true;
       default = [
         {
           string = {
@@ -27,6 +28,7 @@ in
 
     node.packages = lib.mkOption {
       type = types.listOf types.package;
+      readOnly = true;
       default = [
         pkgs.cachix
         (pkgs.callPackage ../../../../groovy-library/vars/cachixPush.nix { inherit pkgs; })
