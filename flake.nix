@@ -19,6 +19,8 @@
         ./nix/deploy.nix
       ];
 
+      flake.flakeModule = ./nix/flake-module.nix;
+
       # TODO: Everything below (including some imports above) should be moved to
       # ./example
 
