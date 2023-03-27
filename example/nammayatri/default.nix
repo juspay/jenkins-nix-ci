@@ -1,16 +1,13 @@
 { self, inputs, ... }:
 
 {
-
-  # TODO: Everything below (including some imports above) should be moved to
-  # ./example
-
   systems = inputs.nixpkgs.lib.systems.flakeExposed;
   imports = [
     inputs.nixos-flake.flakeModule
     ./nix/ngrok-outputs.nix
     ./nix/deploy.nix
   ];
+
   # System configuration
   flake.nixosConfigurations.jenkins-nix-ci = self.nixos-flake.lib.mkLinuxSystem ({ pkgs, config, ... }: {
     imports = [
@@ -51,13 +48,6 @@
         pkgs.sops
         (self.nixosConfigurations.jenkins-nix-ci.config.jenkins-nix-ci.nix-prefetch-jenkins-plugins pkgs)
       ];
-    };
-
-    # Library of apps to run in `Jenkinsfile`
-    # TODO: Remove after this PR is merged: https://github.com/nammayatri/nammayatri/pull/284
-    packages = {
-      docker-push = pkgs.callPackage ./groovy-library/vars/dockerPush.nix { };
-      cachix-push = pkgs.callPackage ./groovy-library/vars/cachixPush.nix { };
     };
   };
 }
