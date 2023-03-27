@@ -1,59 +1,71 @@
 { jenkinsPlugins2nix }:
 { flake, pkgs, lib, config, ... }:
 
+let
+  features_packages = lib.optionals
+    config.jenkins-nix-ci.features.cachix.enable
+    config.jenkins-nix-ci.features.cachix.node.packages;
+in
 {
   imports = [
     ./casc.nix
   ];
   options.jenkins-nix-ci = lib.mkOption {
-    type = lib.types.submodule {
-      options = {
-        port = lib.mkOption {
-          type = lib.types.int;
-          default = 9091;
-          description = "The port to run Jenkins on.";
-        };
-        domain = lib.mkOption {
-          type = lib.types.str;
-          description = "The domain in which Jenkins is exposed to the outside world.";
-        };
-        plugins = lib.mkOption {
-          type = lib.types.listOf lib.types.str;
-          default = [ ];
-          description = "A list of plugins to install.";
-        };
-        plugins-file = lib.mkOption {
-          type = lib.types.str;
-          default = null;
-          description = ''
-            Path to the generated Nix expression containing the plugins.
+    type = lib.types.submoduleWith {
+      shorthandOnlyDefinesConfig = true;
+      specialArgs = { inherit pkgs lib; };
+      modules = [
+        ./features
+        {
+          options = {
+            port = lib.mkOption {
+              type = lib.types.int;
+              default = 9091;
+              description = "The port to run Jenkins on.";
+            };
+            domain = lib.mkOption {
+              type = lib.types.str;
+              description = "The domain in which Jenkins is exposed to the outside world.";
+            };
+            plugins = lib.mkOption {
+              type = lib.types.listOf lib.types.str;
+              default = [ ];
+              description = "A list of plugins to install.";
+            };
+            plugins-file = lib.mkOption {
+              type = lib.types.str;
+              default = null;
+              description = ''
+                Path to the generated Nix expression containing the plugins.
 
-            Must be relative to project root.
-          '';
-        };
-        nix-prefetch-jenkins-plugins = lib.mkOption {
-          type = lib.types.functionTo lib.types.package;
-          default = pkgs:
-            let
-              jenkinsPlugins2nix_system =
-                if pkgs.system == "aarch64-darwin" then "x86_64-darwin" else pkgs.system;
-              fetcher = jenkinsPlugins2nix.packages.${jenkinsPlugins2nix_system}.jenkinsPlugins2nix;
-              inherit (config.jenkins-nix-ci) plugins;
-            in
-            pkgs.writeShellApplication {
-              name = "nix-prefetch-jenkins-plugins";
-              text = ''
-                ${lib.getExe fetcher} \
-                  ${lib.foldl (a: b: "${a} -p ${b}") "" plugins}
+                Must be relative to project root.
               '';
             };
-          description = ''
-            The program that creates `plugins.nix` based on given plugins.
+            nix-prefetch-jenkins-plugins = lib.mkOption {
+              type = lib.types.functionTo lib.types.package;
+              default = pkgs:
+                let
+                  jenkinsPlugins2nix_system =
+                    if pkgs.system == "aarch64-darwin" then "x86_64-darwin" else pkgs.system;
+                  fetcher = jenkinsPlugins2nix.packages.${jenkinsPlugins2nix_system}.jenkinsPlugins2nix;
+                  inherit (config.jenkins-nix-ci) plugins;
+                in
+                pkgs.writeShellApplication {
+                  name = "nix-prefetch-jenkins-plugins";
+                  text = ''
+                    ${lib.getExe fetcher} \
+                      ${lib.foldl (a: b: "${a} -p ${b}") "" plugins}
+                  '';
+                };
+              description = ''
+                The program that creates `plugins.nix` based on given plugins.
 
-            This will fetch the latest plugins using jenkinsPlugins2Nix.
-          '';
-        };
-      };
+                This will fetch the latest plugins using jenkinsPlugins2Nix.
+              '';
+            };
+          };
+        }
+      ];
     };
   };
   config = {
@@ -77,7 +89,7 @@
         cachix
         (pkgs.callPackage ../../groovy-library/vars/cachixPush.nix { inherit pkgs; })
         (pkgs.callPackage ../../groovy-library/vars/dockerPush.nix { inherit pkgs; })
-      ];
+      ] ++ builtins.trace features_packages features_packages;
       plugins = import "${flake.self}/${config.jenkins-nix-ci.plugins-file}" {
         inherit (pkgs) fetchurl stdenv;
       };
