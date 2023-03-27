@@ -14,41 +14,42 @@
       imports = [
         inputs.nixos-flake.flakeModule
         inputs.flake-root.flakeModule
-        ./nix/flake-module.nix
         ./nix/ngrok-outputs.nix
         ./nix/deploy.nix
       ];
 
-      flake.flakeModule = ./nix/flake-module.nix;
+      flake.nixosModules.default = ./nix/jenkins.nix;
 
       # TODO: Everything below (including some imports above) should be moved to
       # ./example
-
-      # This produces self.nixosModules.jenkins-master module for NixOS.
-      jenkins-nix-ci = {
-        # Hardcoded domain spit out by ngrok
-        domain = "b149-106-51-91-112.in.ngrok.io";
-        plugins = [
-          "github-api"
-          "git"
-          "github-branch-source"
-          "workflow-aggregator"
-          "ssh-slaves"
-          "configuration-as-code"
-        ];
-        plugins-file = "nix/jenkins/plugins.nix";
-      };
 
       # System configuration
       flake.nixosConfigurations.jenkins-nix-ci = self.nixos-flake.lib.mkLinuxSystem ({ pkgs, config, ... }: {
         imports = [
           inputs.sops-nix.nixosModules.sops
-          self.nixosModules.jenkins-master
+
+          # Jenkins 
+          ./nix/jenkins.nix
+          ({
+            jenkins-nix-ci = {
+              # Hardcoded domain spit out by ngrok
+              domain = "b149-106-51-91-112.in.ngrok.io";
+              plugins = [
+                "github-api"
+                "git"
+                "github-branch-source"
+                "workflow-aggregator"
+                "ssh-slaves"
+                "configuration-as-code"
+              ];
+              plugins-file = "nix/jenkins/plugins.nix";
+            };
+          })
+
           ./nix/configuration.nix
           ./nix/ngrok.nix
         ];
         sops.defaultSopsFile = ./secrets.yaml;
-
       });
 
       perSystem = { self', inputs', system, lib, config, pkgs, ... }: {
@@ -58,6 +59,7 @@
             pkgs.nixpkgs-fmt
             inputs'.deploy-rs.packages.default
             pkgs.sops
+            (self.nixosConfigurations.jenkins-nix-ci.config.jenkins-nix-ci.nix-prefetch-jenkins-plugins pkgs)
           ];
         };
 
