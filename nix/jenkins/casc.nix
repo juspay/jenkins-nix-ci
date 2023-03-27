@@ -8,8 +8,10 @@ let
     # Never use builtins.readFile, https://github.com/ryantm/agenix#builtinsreadfile-anti-pattern
     readFile = path:
       "$" + "{readFile:" + path + "}";
-    json = k: x:
-      "$" + "{json:" + k + ":" + x + "}";
+    # Parse the string secret as JSON, then extract the value for the specified <key>.
+    # https://github.com/jenkinsci/configuration-as-code-plugin/blob/master/docs/features/secrets.adoc#json
+    json = key: x:
+      "$" + "{json:" + key + ":" + x + "}";
   };
 
   # Jenkins doesn't support a local retriever; so we simulate one by
