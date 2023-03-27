@@ -30,10 +30,11 @@ in
     };
 
     sharedLibrary.vars = lib.mkOption {
-      type = types.listOf types.path;
-      default = [
-        ../../../../groovy-library/dockerPush.groovy
-      ];
+      type = types.package;
+      default = pkgs.runCommand "dockerPush.groovy" { } ''
+        mkdir -p $out/vars
+        cp ${./dockerPush.groovy} $out/vars/dockerPush.groovy
+      '';
     };
 
     node.packages = lib.mkOption {

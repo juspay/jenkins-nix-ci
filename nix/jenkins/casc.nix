@@ -4,6 +4,18 @@ let
   enabledFeatures = lib.filterAttrs (n: v: v.enable) config.jenkins-nix-ci.features;
   features_credentials =
     lib.concatMap (cfg: cfg.casc.credentials) (lib.attrValues enabledFeatures);
+  features_sharedLibraryVars =
+    let vars = builtins.map (cfg: cfg.sharedLibrary.vars) (lib.attrValues enabledFeatures);
+    in pkgs.buildEnv {
+      name = "jenkins-nix-ci-library-enabled-features";
+      paths = vars;
+      postBuild = ''
+        mkdir $out/tmp
+        cp -L $out/vars/* $out/tmp/
+        mv $out/tmp/* $out/vars
+        rmdir $out/tmp
+      '';
+    };
 
   # Functions for working with configuration-as-code-plugin syntax.
   # https://github.com/jenkinsci/configuration-as-code-plugin/blob/master/docs/features/secrets.adoc#additional-variable-substitution
@@ -116,7 +128,8 @@ in
               implicit = true;
               retriever = localRetriever
                 "jenkins-nix-ci-library"
-                ../../groovy-library;
+                # ../../groovy-library;
+                features_sharedLibraryVars;
             }
           ];
         };
