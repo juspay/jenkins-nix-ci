@@ -1,6 +1,8 @@
 
 # nammayatri Jenkins CI
 
+Configuration for the CI machine used in https://github.com/nammayatri
+
 ## Deploying
 
 ```sh
