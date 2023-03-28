@@ -19,9 +19,10 @@ A [NixOS module][nixos-mod] to run [Jenkins][jenkins], optimized specifically fo
 - [ ] Separate build agent for macOS (via nix-darwin)
     
 
-## Example
+## Examples
 
-See `./example/nammayatri`.
+- [./example/nammayatri](./example/nammayatri/flake.nix)
+- https://github.com/srid/nixos-config/blob/master/nixos/jenkins.nix
 
 ## Plugins
 
