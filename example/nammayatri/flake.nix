@@ -35,9 +35,10 @@
                 "workflow-aggregator"
                 "ssh-slaves"
                 "configuration-as-code"
+                "pipeline-graph-view"
               ];
               # This file can be updated by running:
-              #   nix-prefetch-jenkins-plugins > nix/jenkins/plugins.nix
+              #   nix-prefetch-jenkins-plugins > nix/jenkins-plugins.nix
               plugins-file = "example/nammayatri/nix/jenkins-plugins.nix";
 
               features = {
