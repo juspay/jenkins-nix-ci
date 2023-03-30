@@ -51,6 +51,7 @@
 
           ./nix/configuration.nix
           ./nix/ngrok.nix
+          ./nix/tailscale.nix
         ];
         sops.defaultSopsFile = ./secrets.yaml;
       });
