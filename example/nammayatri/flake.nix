@@ -13,7 +13,6 @@
       systems = inputs.nixpkgs.lib.systems.flakeExposed;
       imports = [
         inputs.nixos-flake.flakeModule
-        ./nix/ngrok-outputs.nix
         ./nix/deploy.nix
       ];
 
@@ -26,8 +25,8 @@
           inputs.jenkins-nix-ci.nixosModules.default
           ({
             jenkins-nix-ci = {
-              # Hardcoded domain spit out by ngrok
-              domain = "b149-106-51-91-112.in.ngrok.io";
+              # Tailscale funnel
+              domain = "jenkins-nix-ci.betta-gray.ts.net";
               plugins = [
                 "github-api"
                 "git"
@@ -50,7 +49,6 @@
           })
 
           ./nix/configuration.nix
-          ./nix/ngrok.nix
           ./nix/tailscale.nix
         ];
         sops.defaultSopsFile = ./secrets.yaml;
