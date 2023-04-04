@@ -57,6 +57,8 @@
   services.openssh.enable = true;
   services.openssh.settings.PasswordAuthentication = false;
 
+  services.netdata.enable = true;
+
   # This is mainly to avoid prompts in deploy-rs
   security.sudo.wheelNeedsPassword = false;
 
