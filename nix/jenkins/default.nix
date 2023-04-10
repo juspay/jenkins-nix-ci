@@ -1,4 +1,3 @@
-{ jenkinsPlugins2nix }:
 { flake, pkgs, lib, config, ... }:
 
 {
@@ -6,7 +5,7 @@
     ./casc.nix
     ./features
     ./local-node.nix
-    (import ./plugins.nix { inherit jenkinsPlugins2nix; })
+    ./plugins.nix 
   ];
   options.jenkins-nix-ci = lib.mkOption {
     type = lib.types.submodule {

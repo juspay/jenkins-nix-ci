@@ -1,5 +1,4 @@
-{ jenkinsPlugins2nix }:
-{ pkgs, lib, config, ... }:
+{ pkgs, lib, config, jenkinsPlugins2nix, ... }:
 
 {
   options.jenkins-nix-ci = lib.mkOption {

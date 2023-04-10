@@ -122,8 +122,8 @@
     configuration-as-code = mkJenkinsPlugin {
       name = "configuration-as-code";
       src = fetchurl {
-        url = "https://updates.jenkins-ci.org/download/plugins/configuration-as-code/1616.v11393eccf675/configuration-as-code.hpi";
-        sha256 = "0ee4caff28f4df2faea0b71698d93bfc0a0e3fc1a61226d4ada1c8a9af0fa1d6";
+        url = "https://updates.jenkins-ci.org/download/plugins/configuration-as-code/1625.v27444588cc3d/configuration-as-code.hpi";
+        sha256 = "413a8a73982f2e87dc3a55110ab8d8f292f4b6b5508de21f4fbae6c7005f2ecf";
         };
       };
     credentials = mkJenkinsPlugin {
@@ -381,8 +381,8 @@
     pipeline-build-step = mkJenkinsPlugin {
       name = "pipeline-build-step";
       src = fetchurl {
-        url = "https://updates.jenkins-ci.org/download/plugins/pipeline-build-step/487.va_823138eee8b_/pipeline-build-step.hpi";
-        sha256 = "01db32de84bd43857590788a9cca2f60578f5c67fdb3816eab46b3eda7594774";
+        url = "https://updates.jenkins-ci.org/download/plugins/pipeline-build-step/488.v8993df156e8d/pipeline-build-step.hpi";
+        sha256 = "e546e1443229a93cd9adcf05033f499b12cda0b29156974fb5e5e98a5f57e795";
         };
       };
     pipeline-graph-analysis = mkJenkinsPlugin {
@@ -395,8 +395,8 @@
     pipeline-graph-view = mkJenkinsPlugin {
       name = "pipeline-graph-view";
       src = fetchurl {
-        url = "https://updates.jenkins-ci.org/download/plugins/pipeline-graph-view/175.vb_1a_b_b_cd0fb_86/pipeline-graph-view.hpi";
-        sha256 = "0e2f114c4b4664555c09e36ca714024c7af8baefa24bd947aacc38d0fa4a6b66";
+        url = "https://updates.jenkins-ci.org/download/plugins/pipeline-graph-view/183.v9e27732d970f/pipeline-graph-view.hpi";
+        sha256 = "b59c385a5ae48db674e6d060f85da453b1141e98f8ca81b017bdd8ca6f1cf67f";
         };
       };
     pipeline-groovy-lib = mkJenkinsPlugin {
@@ -453,6 +453,13 @@
       src = fetchurl {
         url = "https://updates.jenkins-ci.org/download/plugins/pipeline-stage-tags-metadata/2.2125.vddb_a_44a_d605e/pipeline-stage-tags-metadata.hpi";
         sha256 = "fd2b092b8472f24bbbba3b95477782fd1aece3e6e64382461b94da1821d04350";
+        };
+      };
+    pipeline-utility-steps = mkJenkinsPlugin {
+      name = "pipeline-utility-steps";
+      src = fetchurl {
+        url = "https://updates.jenkins-ci.org/download/plugins/pipeline-utility-steps/2.15.1/pipeline-utility-steps.hpi";
+        sha256 = "cf415612a7fe9f6f3155a50b751ebf71bfa1a72c0a7b889105bb4c2df059c260";
         };
       };
     plain-credentials = mkJenkinsPlugin {
