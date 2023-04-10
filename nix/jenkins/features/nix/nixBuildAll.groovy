@@ -5,9 +5,8 @@ def call() {
     def outs = readJSON text: s
     echo "Flake outputs to build:\n${s}"
     outs.each{out ->
-      // stage ("Nix Build: ${outs[i]}") {
-        sh label: "Nix Build: ${out}",
-           script: "nix build .#${out}"
-      // }
+      stage ("Nix Build: ${out}") {
+        sh script: "nix build .#${out}"
+      }
     }
 }
