@@ -1,4 +1,4 @@
-{ pkgs, flake-outputs, ... }:
+{ pkgs, lib, flake-outputs, ... }:
 
 pkgs.writeShellApplication {
   name = "jenkins-nix-ci-nixBuildAll";
@@ -7,7 +7,7 @@ pkgs.writeShellApplication {
     set -euo pipefail
 
     set -x
-    for DRV in $(nix run --refresh github:srid/flake-outputs)
+    for DRV in $(${lib.getExe flake-outputs})
     do
       nix build .#"$DRV"
     done
