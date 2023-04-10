@@ -1,4 +1,4 @@
-args@{ lib, pkgs, config, flake-outputs, ... }:
+{ lib, pkgs, config, flake-outputs, ... }:
 
 let
   types = lib.types;
@@ -33,13 +33,9 @@ in
     node.packages = lib.mkOption {
       type = types.listOf types.package;
       readOnly = true;
-      default = 
-        let 
-          flake-outputs = args.flake-outputs.packages.${pkgs.system}.default;
-        in [ 
-          flake-outputs
-          (pkgs.callPackage ./nixBuildAll.nix { inherit flake-outputs; })
-        ];
+      default = [ 
+        flake-outputs.packages.${pkgs.system}.default
+      ];
     };
   };
 }
