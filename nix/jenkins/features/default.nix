@@ -5,6 +5,7 @@
     ./cachix
     ./docker
     ./githubApp
+    ./nix
   ];
 
   options.jenkins-nix-ci.feature-outputs = {

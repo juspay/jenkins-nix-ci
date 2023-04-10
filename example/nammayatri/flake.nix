@@ -44,6 +44,7 @@
                 cachix.enable = true;
                 docker.enable = true;
                 githubApp.enable = true;
+                nix.enable = true;
               };
             };
           })

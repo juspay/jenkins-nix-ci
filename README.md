@@ -12,6 +12,7 @@ A [NixOS module][nixos-mod] to run [Jenkins][jenkins], optimized specifically fo
     - [x] [cachix](https://www.cachix.org/): provides `cachixPush` and `cachixUse` pipeline steps
     - [x] [docker](https://www.docker.com/): provides `dockerPush` pipeline step
     - [x] `githubApp`: provides Github integration for CI status reporting
+    - [x] `nix`: provides `nixBuildAll` to build all flake outputs
 
 ### What's to come
 
