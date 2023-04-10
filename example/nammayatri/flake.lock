@@ -59,11 +59,11 @@
         "nuenv": "nuenv"
       },
       "locked": {
-        "lastModified": 1681068041,
-        "narHash": "sha256-kF1SRK1yzHSzScitDmma9Mg1gaBuqick0woh5BMbzVY=",
+        "lastModified": 1681156618,
+        "narHash": "sha256-laldpiJau/8nVkMx6HjG2bYSfwimSJnRf1MduqxvAt8=",
         "owner": "srid",
         "repo": "flake-outputs",
-        "rev": "156aee7153b9b188ac0ca6696e0263ecb8eb846b",
+        "rev": "3c3c5d5488170983e5f3069dee3e95628951635d",
         "type": "github"
       },
       "original": {
@@ -145,7 +145,7 @@
       },
       "locked": {
         "lastModified": 0,
-        "narHash": "sha256-Xi5lzz2s4KOrMLyTyDjFB5hcn7P9cCpz4xPRjCeYm6w=",
+        "narHash": "sha256-QSYamGhMuJe6PfFcxMOMja4BrX+z4/DQ2UD0T4Rae0M=",
         "path": "../..",
         "type": "path"
       },

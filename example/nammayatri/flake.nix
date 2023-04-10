@@ -27,6 +27,10 @@
             jenkins-nix-ci = {
               # Tailscale funnel
               domain = "jenkins-nix-ci.betta-gray.ts.net";
+
+              # TODO: Some of these plugins are required by jenkins-nix-ci
+              # features; as such, they must be part of a default list and
+              # included even if not specified.
               plugins = [
                 "github-api"
                 "git"
@@ -35,9 +39,13 @@
                 "ssh-slaves"
                 "configuration-as-code"
                 "pipeline-graph-view"
+                "pipeline-utility-steps" # Used by 'nix' feature, for readJSON
               ];
               # This file can be updated by running:
               #   nix-prefetch-jenkins-plugins > nix/jenkins-plugins.nix
+              #
+              # It will fetch the latest version of plugins in the above list,
+              # and write their pinned sources to the jenkins-plugins.nix file.
               plugins-file = "example/nammayatri/nix/jenkins-plugins.nix";
 
               features = {
