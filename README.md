@@ -2,6 +2,8 @@
 
 A [NixOS module][nixos-mod] to run [Jenkins][jenkins], optimized specifically for running projects using [Nix].
 
+![image](https://user-images.githubusercontent.com/3998/231465854-f2b8d5ab-500a-446d-9dfd-1ea3688b3828.png)
+
 ## Features
 
 - Fully nixified
