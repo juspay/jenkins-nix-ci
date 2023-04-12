@@ -6,7 +6,7 @@ def call() {
     echo "Flake outputs to build:\n${s}"
     outs.each{out ->
       stage ("Nix Build: ${out}") {
-        sh script: "nix build .#${out}"
+        sh script: "nix build --no-out-link .#${out}"
       }
     }
 }
