@@ -43,6 +43,10 @@ You also want to get the host key (`ssh-keyscan localhost | ssh-to-age`) of the 
 
 Put both these public age keys in `.sops.yaml` of the repository.
 
+## Who is using it?
+
+- https://github.com/nammayatri/nammayatri
+- https://github.com/srid/emanote
 
 [sops-nix]: https://github.com/Mic92/sops-nix
 [nixos-mod]: https://nixos.wiki/wiki/NixOS_modules
