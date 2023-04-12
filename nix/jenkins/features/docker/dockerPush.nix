@@ -10,7 +10,7 @@ pkgs.writeShellApplication {
     set -x
     # Do a git status, because the docker tag is based on working copy status
     git status
-    docker load -i "$(nix build ".#$1" --print-out-paths)"
+    docker load -i "$(nix build ".#$1" --print-out-paths --no-update-lock-file)"
     set +x
     IMAGE_NAME="$(nix eval --json .#packages.x86_64-linux."$1".buildArgs | jq -r '"\(.name):\(.tag)"')"
     echo "Built and loaded: ''${IMAGE_NAME}"

@@ -15,6 +15,7 @@ A [NixOS module][nixos-mod] to run [Jenkins][jenkins], optimized specifically fo
     - [x] [docker](https://www.docker.com/): provides `dockerPush` pipeline step
     - [x] `githubApp`: provides Github integration for CI status reporting
     - [x] `nix`: provides `nixBuildAll` to build all flake outputs
+      - Uses `--no-update-lock-file` (thus fails on out of sync `flake.lock` files)
 
 ### What's to come
 
