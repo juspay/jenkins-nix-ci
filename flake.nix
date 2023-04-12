@@ -1,7 +1,7 @@
 {
   inputs = {
     jenkinsPlugins2nix.url = "github:Fuuzetsu/jenkinsPlugins2nix";
-    flake-outputs.url = "github:srid/flake-outputs";
+    flake-outputs.url = "github:nix-systems/flake-outputs";
   };
   outputs = inputs: {
     nixosModules.default = {
