@@ -21,6 +21,6 @@ pkgs.writeShellApplication {
     # Clear all but $PATH, to prevent secrets leaking to shellHook.
     env -i PATH="$PATH" nix develop --profile dev-profile -c echo
     cachix push "''${CACHE}" dev-profile
-    rm dev-profile
+    rm -f dev-profile*
   '';
 }
