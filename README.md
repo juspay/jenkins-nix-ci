@@ -25,8 +25,8 @@ A [NixOS module][nixos-mod] to run [Jenkins][jenkins], optimized specifically fo
 
 ## Examples
 
-- [./example/nammayatri](./example/nammayatri/flake.nix)
-- https://github.com/srid/nixos-config/blob/master/nixos/jenkins.nix
+- [./example/nammayatri](./example/nammayatri/flake.nix) (used in https://github.com/nammayatri/nammayatri)
+- https://github.com/srid/nixos-config/blob/master/nixos/jenkins.nix (used in https://github.com/srid/emanote, https://github.com/srid/haskell-flake, etc.)
 
 ## Plugins
 
@@ -46,10 +46,6 @@ You also want to get the host key (`ssh-keyscan localhost | ssh-to-age`) of the 
 
 Put both these public age keys in `.sops.yaml` of the repository.
 
-## Who is using it?
-
-- https://github.com/nammayatri/nammayatri
-- https://github.com/srid/emanote
 
 [sops-nix]: https://github.com/Mic92/sops-nix
 [nixos-mod]: https://nixos.wiki/wiki/NixOS_modules
