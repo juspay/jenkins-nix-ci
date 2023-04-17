@@ -1,4 +1,4 @@
-{ lib, pkgs, config, ... }:
+{ cachix-master, lib, pkgs, config, ... }:
 
 let
   types = lib.types;
@@ -47,7 +47,7 @@ in
       readOnly = true;
       default = [
         pkgs.cachix
-        (pkgs.callPackage ./cachixPush.nix { })
+        (pkgs.callPackage ./cachixPush.nix { inherit cachix-master; })
       ];
     };
   };
