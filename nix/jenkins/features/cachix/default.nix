@@ -1,12 +1,10 @@
-{ cachix-master, lib, pkgs, config, ... }:
+{ cachix-master, cascLib, sops, lib, pkgs, ... }:
 
 let
   types = lib.types;
-  casc = config.jenkins-nix-ci.cascLib;
-  secrets = config.sops.secrets;
 in
 {
-  options.jenkins-nix-ci.features.cachix = {
+  options.features.cachix = {
     enable = lib.mkEnableOption "cachix";
 
     sopsSecrets = lib.mkOption {
@@ -25,8 +23,8 @@ in
         {
           string = {
             id = "cachix-auth-token";
-            description = casc.readFile secrets."jenkins-nix-ci/cachix-auth-token/description".path;
-            secret = casc.readFile secrets."jenkins-nix-ci/cachix-auth-token/secret".path;
+            description = cascLib.readFile sops.secrets."jenkins-nix-ci/cachix-auth-token/description".path;
+            secret = cascLib.readFile sops.secrets."jenkins-nix-ci/cachix-auth-token/secret".path;
           };
         }
       ];
@@ -42,13 +40,15 @@ in
       '';
     };
 
-    node.packages = lib.mkOption {
-      type = types.listOf types.package;
+    node.config = lib.mkOption {
+      type = types.deferredModule;
       readOnly = true;
-      default = [
-        pkgs.cachix
-        (pkgs.callPackage ./cachixPush.nix { inherit cachix-master; })
-      ];
+      default = { pkgs, ... }: {
+        environment.systemPackages = [
+          pkgs.cachix
+          (pkgs.callPackage ./cachixPush.nix { inherit cachix-master; })
+        ];
+      };
     };
   };
 }

@@ -1,12 +1,10 @@
-{ lib, pkgs, config, ... }:
+{ cascLib, sops, lib, pkgs, ... }:
 
 let
   types = lib.types;
-  casc = config.jenkins-nix-ci.cascLib;
-  secrets = config.sops.secrets;
 in
 {
-  options.jenkins-nix-ci.features.docker = {
+  options.features.docker = {
     enable = lib.mkEnableOption "docker";
 
     sopsSecrets = lib.mkOption {
@@ -26,15 +24,15 @@ in
         {
           string = {
             id = "docker-user";
-            description = casc.readFile secrets."jenkins-nix-ci/docker-login/description".path + " User";
-            secret = casc.readFile secrets."jenkins-nix-ci/docker-login/user".path;
+            description = cascLib.readFile sops.secrets."jenkins-nix-ci/docker-login/description".path + " User";
+            secret = cascLib.readFile sops.secrets."jenkins-nix-ci/docker-login/user".path;
           };
         }
         {
           string = {
             id = "docker-pass";
-            description = casc.readFile secrets."jenkins-nix-ci/docker-login/description".path + " Password";
-            secret = casc.readFile secrets."jenkins-nix-ci/docker-login/pass".path;
+            description = cascLib.readFile sops.secrets."jenkins-nix-ci/docker-login/description".path + " Password";
+            secret = cascLib.readFile sops.secrets."jenkins-nix-ci/docker-login/pass".path;
           };
         }
       ];
@@ -49,13 +47,18 @@ in
       '';
     };
 
-    node.packages = lib.mkOption {
-      type = types.listOf types.package;
+    node.config = lib.mkOption {
+      type = types.deferredModule;
       readOnly = true;
-      default = [
-        pkgs.docker
-        (pkgs.callPackage ./dockerPush.nix { })
-      ];
+      default = { pkgs, ... }: {
+        environment.systemPackages = [
+          pkgs.docker
+          (pkgs.callPackage ./dockerPush.nix { })
+        ];
+
+        virtualisation.docker.enable = true;
+        users.users.jenkins.extraGroups = [ "docker" ];
+      };
     };
   };
 }

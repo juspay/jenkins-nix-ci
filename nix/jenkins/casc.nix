@@ -33,8 +33,12 @@ in
 {
   config = {
     # Let jenkins user own the sops secrets associated with enabled features.
-    sops.secrets = lib.foldl (acc: x: acc // { "${x}" = { owner = "jenkins"; }; }) { }
-      config.jenkins-nix-ci.feature-outputs.sopsSecrets;
+    sops.secrets = lib.foldl (acc: x: acc // { "${x}" = { owner = config.services.jenkins.user; }; }) { }
+      config.jenkins-nix-ci.feature-outputs.sopsSecrets
+    // {
+      "jenkins-nix-ci/ssh-key/private".owner = config.services.jenkins.user;
+      "jenkins-nix-ci/ssh-key/public_unencrypted".owner = config.services.jenkins.user;
+    };
   };
   options.jenkins-nix-ci = lib.mkOption {
     type = lib.types.submodule {
@@ -73,17 +77,41 @@ in
         credentials = {
           system.domainCredentials = [
             {
-              inherit (config.jenkins-nix-ci.feature-outputs.casc) credentials;
+              credentials = config.jenkins-nix-ci.feature-outputs.casc.credentials ++ [{
+                basicSSHUserPrivateKey = {
+                  id = "ssh-private-key";
+                  username = config.services.jenkins.user;
+                  description = "SSH key used by Jenkins master to talk to slaves";
+                  privateKeySource.directEntry.privateKey =
+                    config.jenkins-nix-ci.cascLib.readFile
+                      config.sops.secrets."jenkins-nix-ci/ssh-key/private".path;
+                };
+              }];
             }
           ];
         };
         jenkins = {
-          numExecutors = 6;
-          securityRealm = {
-            local = {
-              allowsSignup = false;
-            };
-          };
+          # By default, a Jenkins install allows signups!
+          securityRealm.local.allowsSignup = false;
+
+          numExecutors = if config.jenkins-nix-ci.nodes.local.enable then 6 else 0;
+
+          nodes =
+            lib.flip lib.mapAttrsToList config.jenkins-nix-ci.nodes.containerSlaves.containers (name: container: {
+              permanent = {
+                  inherit name;
+                  labelString = "nixos linux x86_64-linux";
+                  numExecutors = 1;
+                  remoteFS = "/var/lib/jenkins";
+                  retentionStrategy = "always";
+                  launcher.ssh = {
+                    credentialsId = "ssh-private-key";
+                    host = container.localAddress;
+                    port = 22;
+                    sshHostKeyVerificationStrategy.manuallyTrustedKeyVerificationStrategy.requireInitialManualTrust = false;
+                  };
+                };
+            });
         };
         unclassified = {
           location.url = "https://${config.jenkins-nix-ci.domain}/";

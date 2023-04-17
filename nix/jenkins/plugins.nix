@@ -4,6 +4,7 @@
   options.jenkins-nix-ci = lib.mkOption {
     type = lib.types.submodule {
       options = {
+        # TODO: The should include 'features' plugins as well.
         plugins = lib.mkOption {
           type = lib.types.listOf lib.types.str;
           default = [ ];

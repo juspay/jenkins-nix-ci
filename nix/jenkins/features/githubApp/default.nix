@@ -1,12 +1,10 @@
-{ lib, config, ... }:
+{ cascLib, sops, lib, ... }:
 
 let
   types = lib.types;
-  casc = config.jenkins-nix-ci.cascLib;
-  secrets = config.sops.secrets;
 in
 {
-  options.jenkins-nix-ci.features.githubApp = {
+  options.features.githubApp = {
     enable = lib.mkEnableOption "githubApp";
 
     sopsSecrets = lib.mkOption {
@@ -28,9 +26,9 @@ in
           # https://github.com/jenkinsci/github-branch-source-plugin/blob/master/docs/github-app.adoc#configuration-as-code-plugin
           githubApp = {
             id = "github-app";
-            appID = casc.readFile secrets."jenkins-nix-ci/github-app/appID".path;
-            description = casc.readFile secrets."jenkins-nix-ci/github-app/description".path;
-            privateKey = casc.readFile secrets."jenkins-nix-ci/github-app/privateKey".path;
+            appID = cascLib.readFile sops.secrets."jenkins-nix-ci/github-app/appID".path;
+            description = cascLib.readFile sops.secrets."jenkins-nix-ci/github-app/description".path;
+            privateKey = cascLib.readFile sops.secrets."jenkins-nix-ci/github-app/privateKey".path;
           };
         }
       ];
@@ -42,10 +40,10 @@ in
       default = null;
     };
 
-    node.packages = lib.mkOption {
-      type = types.listOf types.package;
+    node.config = lib.mkOption {
+      type = types.deferredModule;
       readOnly = true;
-      default = [ ];
+      default = { };
     };
   };
 }
