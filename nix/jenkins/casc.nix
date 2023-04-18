@@ -54,7 +54,7 @@ in
               inherit name;
               labelString = "nixos linux x86_64-linux";
               numExecutors = 1;
-              remoteFS = "/var/lib/jenkins";
+              remoteFS = config.services.jenkinsSlave.home;
               retentionStrategy = "always";
               launcher.ssh = {
                 credentialsId = "ssh-private-key";
