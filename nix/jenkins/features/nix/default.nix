@@ -1,12 +1,10 @@
-{ lib, pkgs, config, flake-outputs, ... }:
+{ lib, pkgs, ... }:
 
 let
   types = lib.types;
-  casc = config.jenkins-nix-ci.cascLib;
-  secrets = config.sops.secrets;
 in
 {
-  options.jenkins-nix-ci.features.nix = {
+  options.features.nix = {
     enable = lib.mkEnableOption "nix";
 
     sopsSecrets = lib.mkOption {
@@ -30,12 +28,21 @@ in
       '';
     };
 
-    node.packages = lib.mkOption {
-      type = types.listOf types.package;
+    node.config = lib.mkOption {
+      type = types.deferredModule;
       readOnly = true;
-      default = [ 
-        flake-outputs.packages.${pkgs.system}.default
-      ];
+      default = { flake-outputs, pkgs, jenkins, ... }: {
+        environment.systemPackages = [
+          pkgs.nix
+          flake-outputs.packages.${pkgs.system}.default
+        ];
+
+        nix.settings = {
+          allowed-users = [ jenkins.user ];
+          trusted-users = [ jenkins.user ];
+          experimental-features = [ "nix-command" "flakes" ];
+        };
+      };
     };
   };
 }

@@ -19,8 +19,8 @@ A [NixOS module][nixos-mod] to run [Jenkins][jenkins], optimized specifically fo
 
 ### What's to come
 
-- [ ] Separate build agent for Linux (currently we support only Linux, and use the local node)
-- [ ] Separate build agent for macOS (via nix-darwin)
+- [x] Isolated Linux build agents (as [NixOS containers](https://nixos.wiki/wiki/NixOS_Containers) on local machine)
+- [ ] External macOS build agent
     
 
 ## Examples

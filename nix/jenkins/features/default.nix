@@ -8,7 +8,7 @@
     ./nix
   ];
 
-  options.jenkins-nix-ci.feature-outputs = {
+  options.feature-outputs = {
     sopsSecrets = lib.mkOption {
       type = lib.types.listOf lib.types.str;
       internal = true;
@@ -21,14 +21,14 @@
       type = lib.types.package;
       readOnly = true;
     };
-    node.packages = lib.mkOption {
-      type = lib.types.listOf lib.types.package;
+    node.config = lib.mkOption {
+      type = lib.types.listOf lib.types.deferredModule;
       internal = true;
     };
   };
-  config.jenkins-nix-ci.feature-outputs =
+  config.feature-outputs =
     let
-      enabledFeatures = lib.filterAttrs (n: v: v.enable) config.jenkins-nix-ci.features;
+      enabledFeatures = lib.filterAttrs (n: v: v.enable) config.features;
     in
     {
       sopsSecrets = lib.concatMap (cfg: cfg.sopsSecrets) (lib.attrValues enabledFeatures);
@@ -45,6 +45,6 @@
           # `./vars` only.
           paths = sharedLibraries;
         };
-      node.packages = lib.concatMap (cfg: cfg.node.packages) (lib.attrValues enabledFeatures);
+      node.config = lib.forEach (lib.attrValues enabledFeatures) (cfg: cfg.node.config);
     };
 }
