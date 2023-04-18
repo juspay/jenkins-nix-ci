@@ -1,4 +1,4 @@
-{ flake, jenkinsPlugins2nix, pkgs, lib, config, ... }:
+{ flake, pkgs, lib, config, ... }:
 
 {
   imports = [
@@ -12,7 +12,6 @@
       shorthandOnlyDefinesConfig = true;
       specialArgs = {
         inherit pkgs lib;
-        inherit jenkinsPlugins2nix;
         inherit (config) sops;
         inherit (config.services) jenkins;
         cascLib = pkgs.callPackage ./casc/lib.nix { };
