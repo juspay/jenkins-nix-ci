@@ -24,13 +24,12 @@
           jenkinsPlugins2nix_system =
             if pkgs.system == "aarch64-darwin" then "x86_64-darwin" else pkgs.system;
           fetcher = jenkinsPlugins2nix.packages.${jenkinsPlugins2nix_system}.jenkinsPlugins2nix;
-          inherit (config) plugins;
         in
         pkgs.writeShellApplication {
           name = "nix-prefetch-jenkins-plugins";
           text = ''
             ${lib.getExe fetcher} \
-              ${lib.foldl (a: b: "${a} -p ${b}") "" plugins}
+              ${lib.foldl (a: b: "${a} -p ${b}") "" config.plugins}
           '';
         };
       description = ''

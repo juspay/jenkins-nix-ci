@@ -1,4 +1,4 @@
-{ pkgs, lib, config, ... }:
+{ cachix-master, flake-outputs, pkgs, lib, config, ... }:
 
 let
   containerSlaves = config.jenkins-nix-ci.nodes.containerSlaves;
@@ -67,6 +67,10 @@ in
         autoStart = true;
         privateNetwork = true;
         config = {
+          _module.args = {
+            inherit cachix-master flake-outputs;
+            inherit (config.services) jenkins;
+          };
           imports =
             config.jenkins-nix-ci.feature-outputs.node.config
             ++ [

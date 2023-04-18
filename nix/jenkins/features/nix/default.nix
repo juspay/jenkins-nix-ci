@@ -1,9 +1,7 @@
-{ lib, pkgs, config, flake-outputs, jenkins, ... }:
+{ lib, pkgs, ... }:
 
 let
   types = lib.types;
-  casc = config.jenkins-nix-ci.cascLib;
-  secrets = config.sops.secrets;
 in
 {
   options.features.nix = {
@@ -33,7 +31,7 @@ in
     node.config = lib.mkOption {
       type = types.deferredModule;
       readOnly = true;
-      default = { pkgs, ... }: {
+      default = { flake-outputs, pkgs, jenkins, ... }: {
         environment.systemPackages = [
           pkgs.nix
           flake-outputs.packages.${pkgs.system}.default

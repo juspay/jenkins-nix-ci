@@ -1,4 +1,4 @@
-{ flake, flake-outputs, cachix-master, jenkinsPlugins2nix, pkgs, lib, config, ... }:
+{ flake, jenkinsPlugins2nix, pkgs, lib, config, ... }:
 
 {
   imports = [
@@ -7,14 +7,13 @@
   ];
 
   options.jenkins-nix-ci = lib.mkOption {
-    description = "Options for the jenkins-nix-ci module.";
+    description = "Jenkins master configuration";
     type = lib.types.submoduleWith {
       shorthandOnlyDefinesConfig = true;
       specialArgs = {
-        inherit flake-outputs cachix-master jenkinsPlugins2nix;
-        inherit (config.services) jenkins;
-        inherit (config) sops;
         inherit pkgs lib;
+        inherit jenkinsPlugins2nix;
+        inherit (config) sops;
         cascLib = pkgs.callPackage ./casc/lib.nix { };
       };
       modules = [{
@@ -42,8 +41,11 @@
       enable = true;
       inherit (config.jenkins-nix-ci) port;
       environment = {
-        CASC_JENKINS_CONFIG =
-          builtins.toString (pkgs.writeText "jenkins.json" (builtins.toJSON config.jenkins-nix-ci.cascConfig));
+        CASC_JENKINS_CONFIG = lib.pipe config.jenkins-nix-ci.cascConfig [
+          builtins.toJSON
+          (pkgs.writeText "jenkins.json")
+          builtins.toString
+        ];
       };
       packages = with pkgs; [
         git

@@ -1,4 +1,4 @@
-{ cachix-master, cascLib, sops, lib, pkgs, ... }:
+{ cascLib, sops, lib, pkgs, ... }:
 
 let
   types = lib.types;
@@ -43,7 +43,7 @@ in
     node.config = lib.mkOption {
       type = types.deferredModule;
       readOnly = true;
-      default = { pkgs, ... }: {
+      default = { cachix-master, pkgs, ... }: {
         environment.systemPackages = [
           pkgs.cachix
           (pkgs.callPackage ./cachixPush.nix { inherit cachix-master; })
