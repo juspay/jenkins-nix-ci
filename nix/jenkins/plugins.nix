@@ -1,4 +1,4 @@
-{ lib, config, jenkinsPlugins2nix, ... }:
+{ pkgs, lib, config, jenkinsPlugins2nix, ... }:
 
 {
   options = {
@@ -18,8 +18,8 @@
       '';
     };
     nix-prefetch-jenkins-plugins = lib.mkOption {
-      type = lib.types.functionTo lib.types.package;
-      default = pkgs:
+      type = lib.types.package;
+      default =
         let
           jenkinsPlugins2nix_system =
             if pkgs.system == "aarch64-darwin" then "x86_64-darwin" else pkgs.system;

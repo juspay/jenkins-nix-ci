@@ -70,7 +70,7 @@
             pkgs.nixpkgs-fmt
             inputs'.deploy-rs.packages.default
             pkgs.sops
-            (self.nixosConfigurations.jenkins-nix-ci.config.jenkins-nix-ci.nix-prefetch-jenkins-plugins pkgs)
+            self.nixosConfigurations.jenkins-nix-ci.config.jenkins-nix-ci.nix-prefetch-jenkins-plugins
           ];
         };
       };
