@@ -8,8 +8,6 @@ in
     jenkins-nix-ci.nodes = lib.mkOption {
       type = lib.types.submodule {
         options = {
-          # TODO: Remove this, after testing
-          local.enable = lib.mkEnableOption "Enable building on the local node";
           containerSlaves = lib.mkOption {
             type = lib.types.submodule {
               options = {

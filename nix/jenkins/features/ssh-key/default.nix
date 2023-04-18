@@ -7,6 +7,7 @@ in
   options.features.ssh-key = {
     enable = lib.mkOption {
       type = types.bool;
+      # Always enabled, because ssh key is used to connect to the slave nodes
       default = true;
       internal = true;
       readOnly = true;
@@ -58,7 +59,6 @@ in
             sopsJson.jenkins-nix-ci.ssh-key.public_unencrypted;
         in
         {
-
           users.users.${jenkins.user}.openssh.authorizedKeys.keys = [ authorizedKey ];
         };
     };

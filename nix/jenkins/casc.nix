@@ -34,7 +34,8 @@ in
         # By default, a Jenkins install allows signups!
         securityRealm.local.allowsSignup = false;
 
-        numExecutors = if config.jenkins-nix-ci.nodes.local.enable then 6 else 0;
+        # Building on local node is disabled.
+        numExecutors = 0;
 
         nodes =
           lib.flip lib.mapAttrsToList config.jenkins-nix-ci.nodes.containerSlaves.containers (name: container: {
