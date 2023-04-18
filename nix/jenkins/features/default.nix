@@ -6,6 +6,7 @@
     ./docker
     ./githubApp
     ./nix
+    ./ssh-key
   ];
 
   options.feature-outputs = {

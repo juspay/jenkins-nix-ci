@@ -7,12 +7,11 @@ in
 {
   config = {
     # Let jenkins user own the sops secrets associated with enabled features.
-    sops.secrets = lib.foldl (acc: x: acc // { "${x}" = { owner = config.services.jenkins.user; }; }) { }
-      config.jenkins-nix-ci.feature-outputs.sopsSecrets
-    // {
-      "jenkins-nix-ci/ssh-key/private".owner = config.services.jenkins.user;
-      "jenkins-nix-ci/ssh-key/public_unencrypted".owner = config.services.jenkins.user;
-    };
+    sops.secrets =
+      lib.foldl
+        (acc: x: acc // { "${x}" = { owner = config.services.jenkins.user; }; })
+        { }
+        config.jenkins-nix-ci.feature-outputs.sopsSecrets;
   };
   options.jenkins-nix-ci.cascConfig = lib.mkOption {
     type = lib.types.attrs;
@@ -26,22 +25,11 @@ in
       https://github.com/mjuh/nixos-jenkins/blob/master/nixos/modules/services/continuous-integration/jenkins/jenkins.nix
     '';
     default = {
-      credentials = {
-        system.domainCredentials = [
-          {
-            credentials = config.jenkins-nix-ci.feature-outputs.casc.credentials ++ [{
-              basicSSHUserPrivateKey = {
-                id = "ssh-private-key";
-                username = config.services.jenkins.user;
-                description = "SSH key used by Jenkins master to talk to slaves";
-                privateKeySource.directEntry.privateKey =
-                  cascLib.readFile
-                    config.sops.secrets."jenkins-nix-ci/ssh-key/private".path;
-              };
-            }];
-          }
-        ];
-      };
+      credentials.system.domainCredentials = [
+        {
+          inherit (config.jenkins-nix-ci.feature-outputs.casc) credentials;
+        }
+      ];
       jenkins = {
         # By default, a Jenkins install allows signups!
         securityRealm.local.allowsSignup = false;

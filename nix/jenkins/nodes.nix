@@ -1,14 +1,7 @@
-{ cachix-master, flake-outputs, pkgs, lib, config, ... }:
+{ cachix-master, flake-outputs, lib, config, ... }:
 
 let
   containerSlaves = config.jenkins-nix-ci.nodes.containerSlaves;
-  authorizedKey =
-    # In lieu of https://github.com/Mic92/sops-nix/issues/317
-    let
-      fromYAML = pkgs.callPackage ../from-yaml.nix { };
-      sopsJson = fromYAML (builtins.readFile config.sops.defaultSopsFile);
-    in
-    sopsJson.jenkins-nix-ci.ssh-key.public_unencrypted;
 in
 {
   options = {
@@ -76,7 +69,6 @@ in
             ++ [
               ./slave.nix
             ];
-          users.users.${config.services.jenkins.user}.openssh.authorizedKeys.keys = [ authorizedKey ];
           system.stateVersion = config.system.stateVersion;
         };
       });

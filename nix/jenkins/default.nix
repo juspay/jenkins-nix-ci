@@ -14,6 +14,7 @@
         inherit pkgs lib;
         inherit jenkinsPlugins2nix;
         inherit (config) sops;
+        inherit (config.services) jenkins;
         cascLib = pkgs.callPackage ./casc/lib.nix { };
       };
       modules = [{
