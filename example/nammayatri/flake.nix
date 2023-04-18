@@ -28,6 +28,16 @@
               # Tailscale funnel
               domain = "jenkins-nix-ci.betta-gray.ts.net";
 
+              nodes.containerSlaves = {
+                externalInterface = "wlp5s0";
+                hostAddress = "192.168.11.238";
+                containers = {
+                  jenkins-slave-nixos-1.localAddress = "192.168.100.11";
+                  jenkins-slave-nixos-2.localAddress = "192.168.100.12";
+                  jenkins-slave-nixos-3.localAddress = "192.168.100.13";
+                };
+              };
+
               # TODO: Some of these plugins are required by jenkins-nix-ci
               # features; as such, they must be part of a default list and
               # included even if not specified.
