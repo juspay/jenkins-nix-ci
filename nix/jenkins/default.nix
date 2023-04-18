@@ -1,10 +1,9 @@
-{ flake, flake-outputs, cachix-master, pkgs, lib, config, ... }:
+{ flake, flake-outputs, cachix-master, jenkinsPlugins2nix, pkgs, lib, config, ... }:
 
 {
   imports = [
     ./casc.nix
     ./nodes.nix
-    ./plugins.nix
   ];
 
   options.jenkins-nix-ci = lib.mkOption {
@@ -12,14 +11,17 @@
     type = lib.types.submoduleWith {
       shorthandOnlyDefinesConfig = true;
       specialArgs = {
-        inherit flake-outputs cachix-master;
+        inherit flake-outputs cachix-master jenkinsPlugins2nix;
         inherit (config.services) jenkins;
         inherit (config) sops;
         inherit pkgs lib;
-        cascLib = pkgs.callPackage ./casc/lib.nix {};
+        cascLib = pkgs.callPackage ./casc/lib.nix { };
       };
       modules = [{
-        imports = [ ./features ];
+        imports = [
+          ./plugins.nix
+          ./features
+        ];
         options = {
           port = lib.mkOption {
             type = lib.types.int;
