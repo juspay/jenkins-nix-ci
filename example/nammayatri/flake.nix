@@ -35,6 +35,9 @@
                   jenkins-slave-nixos-1.localAddress = "192.168.100.11";
                   jenkins-slave-nixos-2.localAddress = "192.168.100.12";
                   jenkins-slave-nixos-3.localAddress = "192.168.100.13";
+                  jenkins-slave-nixos-4.localAddress = "192.168.100.14";
+                  jenkins-slave-nixos-5.localAddress = "192.168.100.15";
+                  jenkins-slave-nixos-6.localAddress = "192.168.100.16";
                 };
               };
 
