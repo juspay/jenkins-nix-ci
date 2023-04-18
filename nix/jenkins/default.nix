@@ -8,14 +8,15 @@
   ];
 
   options.jenkins-nix-ci = lib.mkOption {
+    description = "Options for the jenkins-nix-ci module.";
     type = lib.types.submoduleWith {
       shorthandOnlyDefinesConfig = true;
       specialArgs = {
         inherit flake-outputs cachix-master;
         inherit (config.services) jenkins;
         inherit (config) sops;
-        inherit (config.jenkins-nix-ci) cascLib;
         inherit pkgs lib;
+        cascLib = pkgs.callPackage ./casc/lib.nix {};
       };
       modules = [{
         imports = [ ./features ];
