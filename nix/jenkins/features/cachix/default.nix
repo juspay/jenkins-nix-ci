@@ -43,10 +43,10 @@ in
     node.config = lib.mkOption {
       type = types.deferredModule;
       readOnly = true;
-      default = { cachix-master, pkgs, ... }: {
+      default = { pkgs, ... }: {
         environment.systemPackages = [
           pkgs.cachix
-          (pkgs.callPackage ./cachixPush.nix { inherit cachix-master; })
+          (pkgs.callPackage ./cachixPush.nix { })
         ];
       };
     };

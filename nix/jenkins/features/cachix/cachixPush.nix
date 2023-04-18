@@ -1,12 +1,10 @@
-{ cachix-master, pkgs, ... }:
+{ pkgs, ... }:
 
 pkgs.writeShellApplication {
   name = "jenkins-nix-ci-cachixPush";
   runtimeInputs = [ 
     pkgs.jq 
-    # To investigate a cachix push issue, we are using master
-    # https://github.com/cachix/cachix/commit/24e0ba91600dc37ca050e44db03f7addb10a06be
-    cachix-master.packages.${pkgs.system}.default
+    pkgs.cachix
   ];
   # https://docs.cachix.org/pushing
   text = ''

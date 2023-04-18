@@ -31,10 +31,10 @@ in
     node.config = lib.mkOption {
       type = types.deferredModule;
       readOnly = true;
-      default = { flake-outputs, pkgs, jenkins, ... }: {
-        environment.systemPackages = [
-          pkgs.nix
-          flake-outputs.packages.${pkgs.system}.default
+      default = { pkgs, jenkins, ... }: {
+        environment.systemPackages = with pkgs; [
+          nix
+          flake-outputs
         ];
 
         nix.settings = {

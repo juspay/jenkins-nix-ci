@@ -1,4 +1,4 @@
-{ cachix-master, flake-outputs, lib, config, ... }:
+{ lib, config, ... }:
 
 let
   containerSlaves = config.jenkins-nix-ci.nodes.containerSlaves;
@@ -59,9 +59,9 @@ in
         privateNetwork = true;
         config = {
           _module.args = {
-            inherit cachix-master flake-outputs;
             inherit (config.services) jenkins;
           };
+          nixpkgs = { inherit (config.nixpkgs) overlays; };
           imports =
             config.jenkins-nix-ci.feature-outputs.node.config
             ++ [
