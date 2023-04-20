@@ -22,7 +22,7 @@
       default = pkgs.writeShellApplication {
         name = "nix-prefetch-jenkins-plugins";
         text = ''
-          ${lib.getExe pkgs.jenkinsPlugins2Nix} \
+          ${lib.getExe pkgs.jenkinsPlugins2nix} \
             ${lib.foldl (a: b: "${a} -p ${b}") "" config.plugins}
         '';
       };
