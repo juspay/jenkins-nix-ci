@@ -11,7 +11,7 @@
         (self: super: {
           cachix = inputs.cachix.packages.${pkgs.system}.default;
           flake-outputs = inputs.flake-outputs.packages.${pkgs.system}.default;
-          jenkinsPlugins2nix = inputs.jenkinsPlugins2nix.packages.${if pkgs.system == "aarch64-darwin" then "x86_64-darwin" else pkgs.system}.jenkinsPlugins2nix;
+          jenkinsPlugins2nix = inputs.jenkinsPlugins2nix.packages.${pkgs.system}.jenkinsPlugins2nix;
         })
       ];
       imports = [ ./nix/jenkins ];
