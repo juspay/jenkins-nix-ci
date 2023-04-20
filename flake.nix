@@ -2,9 +2,8 @@
   inputs = {
     jenkinsPlugins2nix.url = "github:Fuuzetsu/jenkinsPlugins2nix";
     flake-outputs.url = "github:nix-systems/flake-outputs";
-    # To investigate a cachix push issue, we are using master
-    # https://github.com/cachix/cachix/commit/24e0ba91600dc37ca050e44db03f7addb10a06be
-    cachix.url = "github:cachix/cachix";
+    # Downgrade cachix to obviate https://github.com/cachix/cachix/issues/529
+    cachix.url = "github:cachix/cachix/v1.3.3";
   };
   outputs = inputs: {
     nixosModules.default = { pkgs, ... }: {
