@@ -11,7 +11,7 @@ def call() {
     // slow. Ideally, we should be running the build of each package in parallel.
     outs.each{out ->
       stage ("Nix Build: ${out}") {
-        sh script: "nix build -L --no-link --no-update-lock-file .#${out}"
+        sh script: "nix build -L --no-link --no-update-lock-file --print-out-paths .#${out}"
       }
     }
 }
