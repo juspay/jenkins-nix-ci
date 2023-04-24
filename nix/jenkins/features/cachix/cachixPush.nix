@@ -13,7 +13,7 @@ pkgs.writeShellApplication {
     CACHE="$1"
 
     set -x
-    nix build github:srid/devour-flake \
+    nix build github:srid/devour-flake/v1 \
       -L --no-link --print-out-paths \
       --override-input flake . \
       | xargs cat | cachix push "''${CACHE}" 
