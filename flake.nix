@@ -11,6 +11,7 @@
         (self: super: {
           cachix = inputs.cachix.packages.${pkgs.system}.default;
           flake-outputs = inputs.flake-outputs.packages.${pkgs.system}.default;
+          devour-flake-cat = self.callPackage ./nix/devour-flake-cat.nix { };
           jenkinsPlugins2nix = inputs.jenkinsPlugins2nix.packages.${pkgs.system}.jenkinsPlugins2nix;
         })
       ];

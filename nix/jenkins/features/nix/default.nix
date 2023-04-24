@@ -36,6 +36,7 @@ in
         environment.systemPackages = with pkgs; [
           nix
           flake-outputs
+          devour-flake-cat
         ];
 
         nix.settings = {
