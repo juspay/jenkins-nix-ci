@@ -46,6 +46,22 @@
         "type": "github"
       }
     },
+    "devour-flake": {
+      "flake": false,
+      "locked": {
+        "lastModified": 1682365390,
+        "narHash": "sha256-2YxaoF3toOwdGZ9OIjsEy/BAX4Ws/xnp/D4D41Tltz8=",
+        "owner": "srid",
+        "repo": "devour-flake",
+        "rev": "fcf0a1eeec775f1b9c3335bd8d69f4acafec8a87",
+        "type": "github"
+      },
+      "original": {
+        "owner": "srid",
+        "repo": "devour-flake",
+        "type": "github"
+      }
+    },
     "flake-compat": {
       "flake": false,
       "locked": {
@@ -442,6 +458,7 @@
     "root": {
       "inputs": {
         "cachix": "cachix",
+        "devour-flake": "devour-flake",
         "flake-outputs": "flake-outputs",
         "jenkinsPlugins2nix": "jenkinsPlugins2nix"
       }

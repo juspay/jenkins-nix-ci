@@ -5,7 +5,7 @@ pkgs.writeShellApplication {
   runtimeInputs = [ 
     pkgs.jq 
     pkgs.cachix
-    pkgs.devour-flake-cat
+    pkgs.devour-flake
   ];
   # https://docs.cachix.org/pushing
   text = ''
@@ -14,6 +14,6 @@ pkgs.writeShellApplication {
     CACHE="$1"
 
     set -x
-    devour-flake-cat . | cachix push "''${CACHE}" 
+    devour-flake . | cachix push "''${CACHE}" 
   '';
 }

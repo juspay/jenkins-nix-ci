@@ -2,6 +2,6 @@
 
 def call() {
     stage ("Nix Build All") {
-      sh "devour-flake-cat ."
+      sh "devour-flake ."
     }
 }
