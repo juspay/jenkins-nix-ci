@@ -57,7 +57,9 @@
   services.openssh.enable = true;
   services.openssh.settings.PasswordAuthentication = false;
 
+  # To connect to netdata cloud, see https://dataswamp.org/~solene/2022-09-16-netdata-cloud-nixos.html
   services.netdata.enable = true;
+  environment.systemPackages = [ pkgs.netdata ];
 
   # This is mainly to avoid prompts in deploy-rs
   security.sudo.wheelNeedsPassword = false;
