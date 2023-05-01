@@ -38,19 +38,38 @@ in
         numExecutors = 0;
 
         nodes =
-          lib.flip lib.mapAttrsToList config.jenkins-nix-ci.nodes.containerSlaves.containers (name: container: {
+          let
+            inherit (config.jenkins-nix-ci.nodes)
+              sshSlaves;
+            inherit (config.jenkins-nix-ci.nodes.containerSlaves)
+              containers;
+          in
+          lib.flip lib.mapAttrsToList (sshSlaves // containers) (name: node: {
             permanent = {
               inherit name;
-              labelString = "nixos linux x86_64-linux";
-              numExecutors = 1;
+              inherit (node) labelString numExecutors;
               remoteFS = config.services.jenkinsSlave.home;
               retentionStrategy = "always";
               launcher.ssh = {
                 credentialsId = "ssh-private-key";
-                host = container.localAddress;
+                host = node.hostIP;
                 port = 22;
                 sshHostKeyVerificationStrategy.manuallyTrustedKeyVerificationStrategy.requireInitialManualTrust = false;
               };
+            } // lib.optionalAttrs (name == "biryani") {
+              nodeProperties = [{
+                envVars.env = [
+                  {
+                    key = "PATH";
+                    value = "/run/current-system/sw/bin/:/usr/bin:/bin:/usr/sbin:/sbin";
+                  }
+                  {
+                    key = "JAVA_HOME";
+                    # FIXME:
+                    value = "/nix/store/sjcqcpqryfv9r9r5lxm47zw24pbjii79-zulu11.48.21-ca-jdk-11.0.11";
+                  }
+                ];
+              }];
             };
           });
       };

@@ -28,14 +28,24 @@
               # Tailscale funnel
               domain = "jenkins-nix-ci.betta-gray.ts.net";
 
-              nodes.containerSlaves = {
-                externalInterface = "wlp5s0";
-                hostAddress = "192.168.11.238";
-                containers = {
-                  jenkins-slave-nixos-1.localAddress = "192.168.100.11";
-                  jenkins-slave-nixos-2.localAddress = "192.168.100.12";
-                  jenkins-slave-nixos-3.localAddress = "192.168.100.13";
-                  jenkins-slave-nixos-4.localAddress = "192.168.100.14";
+              nodes = {
+                containerSlaves = {
+                  externalInterface = "wlp5s0";
+                  hostAddress = "192.168.11.238";
+                  containers = {
+                    jenkins-slave-nixos-1.hostIP = "192.168.100.11";
+                    jenkins-slave-nixos-2.hostIP = "192.168.100.12";
+                    jenkins-slave-nixos-3.hostIP = "192.168.100.13";
+                    jenkins-slave-nixos-4.hostIP = "192.168.100.14";
+                  };
+                };
+                sshSlaves = {
+                  # Mac Studio in office.
+                  biryani = {
+                    hostIP = "100.97.32.60";  # Tailscale IP
+                    numExecutors = 4;
+                    labelString = "macos ${pkgs.system}";
+                  };
                 };
               };
 

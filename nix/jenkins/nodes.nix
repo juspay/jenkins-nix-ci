@@ -1,4 +1,4 @@
-{ lib, config, ... }:
+{ pkgs, lib, config, ... }:
 
 let
   containerSlaves = config.jenkins-nix-ci.nodes.containerSlaves;
@@ -8,6 +8,25 @@ in
     jenkins-nix-ci.nodes = lib.mkOption {
       type = lib.types.submodule {
         options = {
+          sshSlaves = lib.mkOption {
+            default = { };
+            type = lib.types.attrsOf (lib.types.submodule {
+              options = {
+                hostIP = lib.mkOption {
+                  type = lib.types.str;
+                  description = "IP address of the SSH slave";
+                };
+                numExecutors = lib.mkOption {
+                  type = lib.types.int;
+                  description = "Number of executors for this SSH slave";
+                };
+                labelString = lib.mkOption {
+                  type = lib.types.str;
+                  description = "Jenkins node label string for this SSH slave";
+                };
+              };
+            });
+          };
           containerSlaves = lib.mkOption {
             type = lib.types.submodule {
               options = {
@@ -22,9 +41,19 @@ in
                 containers = lib.mkOption {
                   type = lib.types.attrsOf (lib.types.submodule {
                     options = {
-                      localAddress = lib.mkOption {
+                      hostIP = lib.mkOption {
                         type = lib.types.str;
                         description = "Local address of the container";
+                      };
+                      numExecutors = lib.mkOption {
+                        type = lib.types.int;
+                        default = 1;
+                        description = "Number of executors for the container";
+                      };
+                      labelString = lib.mkOption {
+                        type = lib.types.str;
+                        default = "nixos linux ${pkgs.system}";
+                        description = "Jenkins node label string for the container";
                       };
                     };
                   });
@@ -54,7 +83,7 @@ in
     containers =
       lib.flip lib.mapAttrs containerSlaves.containers (_name: container: {
         inherit (containerSlaves) hostAddress;
-        inherit (container) localAddress;
+        localAddress = container.hostIP;
         autoStart = true;
         privateNetwork = true;
         config = {
