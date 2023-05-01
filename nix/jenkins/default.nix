@@ -4,7 +4,7 @@
   imports = [
     ./casc.nix
     ./nodes.nix
-    ./distributed.nix
+    # ./distributed.nix
   ];
 
   options.jenkins-nix-ci = lib.mkOption {

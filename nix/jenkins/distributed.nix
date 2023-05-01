@@ -10,7 +10,7 @@ let
   remoteBuilder = {
     user = "admin";
     hostName = "biryani";
-    hostIp = "100.97.32.60";  # Tailscale IP
+    hostIP = "100.97.32.60";  # Tailscale IP
     # system = "aarch64-darwin";
     # if the builder supports building for multiple architectures, 
     # replace the previous line by, e.g.,
@@ -30,12 +30,12 @@ in {
   programs.ssh.extraConfig = ''
     Host ${remoteBuilder.hostName}
       User ${remoteBuilder.user}
-      HostName ${remoteBuilder.hostIp}
+      HostName ${remoteBuilder.hostIP}
       IdentitiesOnly yes
       IdentityFile ${config.sops.secrets."jenkins-nix-ci/ssh-key/private".path}
   '';
   programs.ssh.knownHosts.biryani = {
-    hostNames = [ remoteBuilder.hostName remoteBuilder.hostIp ];
+    hostNames = [ remoteBuilder.hostName remoteBuilder.hostIP ];
     inherit (remoteBuilder) publicKey;
   };
   nix.distributedBuilds = true;
