@@ -11,7 +11,7 @@ let
     user = "admin";
     hostName = "biryani";
     hostIp = "100.97.32.60";  # Tailscale IP
-    system = "aarch64-darwin";
+    # system = "aarch64-darwin";
     # if the builder supports building for multiple architectures, 
     # replace the previous line by, e.g.,
     systems = [ "aarch64-darwin" "x86_64-darwin" ];
@@ -41,7 +41,7 @@ in {
   nix.distributedBuilds = true;
   nix.buildMachines = [{
     inherit (remoteBuilder)
-      hostName system systems maxJobs speedFactor;
+      hostName systems maxJobs speedFactor;
     protocol = "ssh-ng";
     supportedFeatures = [ "benchmark" "big-parallel" "kvm" ];
     mandatoryFeatures = [ ];
