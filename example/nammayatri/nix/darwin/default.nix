@@ -42,6 +42,7 @@
       home.packages = with pkgs; [
         neovim
       ];
+
       programs.starship.enable = true;
       programs.zsh = {
         enable = true;

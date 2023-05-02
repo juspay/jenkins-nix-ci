@@ -19,7 +19,6 @@
 
   environment.systemPackages = with pkgs; [
     # TODO: Must use features' packages
-    jdk11
     bashInteractive
     cachix
   ];
@@ -27,5 +26,13 @@
   nix.settings = {
     allowed-users = [ "jenkins" ];
     trusted-users = [ "jenkins" ];
+  };
+
+  home-manager.users.jenkins = {
+    # Because, the ssh-slaves plugin looks for java under ~/jdk
+    # https://github.com/jenkinsci/ssh-slaves-plugin/blob/8ecb84077797fb4eedd72942a4791e61955a50fd/src/main/java/hudson/plugins/sshslaves/DefaultJavaProvider.java#L65
+    home.file."jdk".source = pkgs.jdk;
+
+    home.stateVersion = "22.11";
   };
 }

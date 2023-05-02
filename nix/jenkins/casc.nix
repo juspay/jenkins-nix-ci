@@ -1,7 +1,6 @@
 { pkgs, lib, config, ... }:
 
 let
-  cascLib = pkgs.callPackage ./casc/lib.nix { };
   localRetriever = pkgs.callPackage ./casc/local-retriever.nix { };
 in
 {
@@ -56,17 +55,15 @@ in
                 port = 22;
                 sshHostKeyVerificationStrategy.manuallyTrustedKeyVerificationStrategy.requireInitialManualTrust = false;
               };
+              # FIXME: hack
             } // lib.optionalAttrs (name == "biryani") {
               nodeProperties = [{
                 envVars.env = [
+                  # The Jenkins pipeline steps will see these environment variables.
+                  # PATH is essential to make nix and friends available to jobs.
                   {
                     key = "PATH";
                     value = "/run/current-system/sw/bin/:/usr/bin:/bin:/usr/sbin:/sbin";
-                  }
-                  {
-                    key = "JAVA_HOME";
-                    # FIXME:
-                    value = "/nix/store/sjcqcpqryfv9r9r5lxm47zw24pbjii79-zulu11.48.21-ca-jdk-11.0.11";
                   }
                 ];
               }];

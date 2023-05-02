@@ -1,4 +1,4 @@
-{ pkgs, lib, config, ... }:
+{ flake, pkgs, lib, config, ... }:
 
 let
   containerSlaves = config.jenkins-nix-ci.nodes.containerSlaves;
@@ -10,7 +10,7 @@ in
         options = {
           sshSlaves = lib.mkOption {
             default = { };
-            type = lib.types.attrsOf (lib.types.submodule {
+            type = lib.types.attrsOf (lib.types.submodule ({config, ... }: {
               options = {
                 hostIP = lib.mkOption {
                   type = lib.types.str;
@@ -25,7 +25,7 @@ in
                   description = "Jenkins node label string for this SSH slave";
                 };
               };
-            });
+            }));
           };
           containerSlaves = lib.mkOption {
             type = lib.types.submodule {
