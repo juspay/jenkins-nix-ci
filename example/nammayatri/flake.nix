@@ -4,7 +4,15 @@
     flake-parts.url = "github:hercules-ci/flake-parts";
     nixos-flake.url = "github:srid/nixos-flake";
     sops-nix.url = "github:Mic92/sops-nix";
-    deploy-rs.url = "github:serokell/deploy-rs";
+
+    # https://github.com/serokell/deploy-rs/pull/205
+    deploy-rs.url = "github:serokell/deploy-rs/rvem/improve-temp-path-handling";
+
+    # Darwin
+    nix-darwin.url = "github:lnl7/nix-darwin/master";
+    nix-darwin.inputs.nixpkgs.follows = "nixpkgs";
+    home-manager.url = "github:nix-community/home-manager";
+    home-manager.inputs.nixpkgs.follows = "nixpkgs";
 
     jenkins-nix-ci.url = "path:../..";
   };
@@ -14,6 +22,10 @@
       imports = [
         inputs.nixos-flake.flakeModule
         ./nix/deploy.nix
+
+        # TODO: Refactor macos configuration, in the same manner as nixosConfiguration below
+        # And make it aware of jenkins-nix-ci module options.
+        ./nix/darwin
       ];
 
       # System configuration
@@ -78,7 +90,7 @@
             };
           })
 
-          ./nix/configuration.nix
+          ./nix/nixos/configuration.nix
           ./nix/tailscale.nix
         ];
         sops.defaultSopsFile = ./secrets.yaml;
