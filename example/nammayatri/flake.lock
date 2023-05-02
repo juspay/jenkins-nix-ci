@@ -29,15 +29,16 @@
         "utils": "utils"
       },
       "locked": {
-        "lastModified": 1674127017,
-        "narHash": "sha256-QO1xF7stu5ZMDLbHN30LFolMAwY6TVlzYvQoUs1RD68=",
+        "lastModified": 1681974793,
+        "narHash": "sha256-ee7PV3iuQZKFZbLk1iPbp6nanEoYQ+RzKlfxEf3YJlE=",
         "owner": "serokell",
         "repo": "deploy-rs",
-        "rev": "8c9ea9605eed20528bf60fae35a2b613b901fd77",
+        "rev": "784e9ee24d977c99dcb5ba5aef81dae48cb899fb",
         "type": "github"
       },
       "original": {
         "owner": "serokell",
+        "ref": "rvem/improve-temp-path-handling",
         "repo": "deploy-rs",
         "type": "github"
       }
@@ -273,6 +274,26 @@
         "type": "github"
       }
     },
+    "home-manager": {
+      "inputs": {
+        "nixpkgs": [
+          "nixpkgs"
+        ]
+      },
+      "locked": {
+        "lastModified": 1682977601,
+        "narHash": "sha256-F1Va/Uiw2tVNn27FLqWyBkiqDyIm/eCamw9wA/GK8Fw=",
+        "owner": "nix-community",
+        "repo": "home-manager",
+        "rev": "0e4c33d76006c9080d2f228ba1c2308e3e4d7be6",
+        "type": "github"
+      },
+      "original": {
+        "owner": "nix-community",
+        "repo": "home-manager",
+        "type": "github"
+      }
+    },
     "jenkins-nix-ci": {
       "inputs": {
         "cachix": "cachix",
@@ -282,7 +303,7 @@
       },
       "locked": {
         "lastModified": 0,
-        "narHash": "sha256-BoJJjlsjv8eF1m2eUl9jB6GAXluGctvZCM59dd9voXk=",
+        "narHash": "sha256-lKArQu+RPbEJYOkCKUgpoagUb9Vtw2peaoHaOz8c07s=",
         "path": "../..",
         "type": "path"
       },
@@ -350,6 +371,27 @@
         "owner": "domenkozar",
         "ref": "relaxed-flakes",
         "repo": "nix",
+        "type": "github"
+      }
+    },
+    "nix-darwin": {
+      "inputs": {
+        "nixpkgs": [
+          "nixpkgs"
+        ]
+      },
+      "locked": {
+        "lastModified": 1682773107,
+        "narHash": "sha256-+h94XeJnG3uk5imJlBi/1lVmcfCbxHpwZp5u7n3Krwg=",
+        "owner": "lnl7",
+        "repo": "nix-darwin",
+        "rev": "379d42fad6bc5c28f79d5f7ff2fa5f1c90cb7bf8",
+        "type": "github"
+      },
+      "original": {
+        "owner": "lnl7",
+        "ref": "master",
+        "repo": "nix-darwin",
         "type": "github"
       }
     },
@@ -633,7 +675,9 @@
       "inputs": {
         "deploy-rs": "deploy-rs",
         "flake-parts": "flake-parts",
+        "home-manager": "home-manager",
         "jenkins-nix-ci": "jenkins-nix-ci",
+        "nix-darwin": "nix-darwin",
         "nixos-flake": "nixos-flake",
         "nixpkgs": "nixpkgs_7",
         "sops-nix": "sops-nix"
