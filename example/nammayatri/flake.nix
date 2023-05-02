@@ -51,14 +51,15 @@
                     jenkins-slave-nixos-4.hostIP = "192.168.100.14";
                   };
                 };
-                sshSlaves = {
+                /* sshSlaves = {
                   # Mac Studio in office.
                   biryani = {
                     hostIP = "100.97.32.60";  # Tailscale IP
                     numExecutors = 4;
-                    labelString = "macos ${pkgs.system}";
+                    labelString = "macos";
+                    system = "aarch64-darwin"
                   };
-                };
+                }; */
               };
 
               # TODO: Some of these plugins are required by jenkins-nix-ci
