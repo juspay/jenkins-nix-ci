@@ -13,7 +13,7 @@
         (self: super: {
           cachix = inputs.cachix.packages.${pkgs.system}.default;
           flake-outputs = inputs.flake-outputs.packages.${pkgs.system}.default;
-          devour-flake = self.callPackage inputs.devour-flake { inherit (inputs) devour-flake; };
+          devour-flake = self.callPackage inputs.devour-flake { };
           jenkinsPlugins2nix = inputs.jenkinsPlugins2nix.packages.${pkgs.system}.jenkinsPlugins2nix;
         })
       ];
