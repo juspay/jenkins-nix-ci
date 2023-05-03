@@ -2,6 +2,7 @@
 
 let
   localRetriever = pkgs.callPackage ./casc/local-retriever.nix { };
+  mkNode = pkgs.callPackage ./casc/mk-node.nix { inherit config; };
 in
 {
   config = {
@@ -43,32 +44,8 @@ in
             inherit (config.jenkins-nix-ci.nodes.containerSlaves)
               containers;
           in
-          lib.flip lib.mapAttrsToList (containers // sshSlaves) (name: node: {
-            permanent = {
-              inherit name;
-              inherit (node) labelString numExecutors;
-              remoteFS = config.services.jenkinsSlave.home;
-              retentionStrategy = "always";
-              launcher.ssh = {
-                credentialsId = "ssh-private-key";
-                host = node.hostIP;
-                port = 22;
-                sshHostKeyVerificationStrategy.manuallyTrustedKeyVerificationStrategy.requireInitialManualTrust = false;
-              };
-              # FIXME: hack
-            } // lib.optionalAttrs (name == "biryani") {
-              nodeProperties = [{
-                envVars.env = [
-                  # The Jenkins pipeline steps will see these environment variables.
-                  # PATH is essential to make nix and friends available to jobs.
-                  {
-                    key = "PATH";
-                    value = "/run/current-system/sw/bin/:/usr/bin:/bin:/usr/sbin:/sbin";
-                  }
-                ];
-              }];
-            };
-          });
+          lib.mapAttrsToList mkNode containers ++
+          lib.mapAttrsToList mkNode sshSlaves;
       };
       unclassified = {
         location.url = "https://${config.jenkins-nix-ci.domain}/";

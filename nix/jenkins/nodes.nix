@@ -1,7 +1,29 @@
-{ flake, pkgs, lib, config, ... }:
+{ pkgs, lib, config, ... }:
 
 let
   containerSlaves = config.jenkins-nix-ci.nodes.containerSlaves;
+
+  nodeSubModule = defaults: lib.types.submoduleWith {
+    modules = [
+      defaults
+      {
+        options = {
+          hostIP = lib.mkOption {
+            type = lib.types.str;
+            description = "IP address of the node";
+          };
+          numExecutors = lib.mkOption {
+            type = lib.types.int;
+            description = "Number of executors for this node";
+          };
+          labelString = lib.mkOption {
+            type = lib.types.str;
+            description = "Node label string (referenced in Jenkinsfile)";
+          };
+        };
+      }
+    ];
+  };
 in
 {
   options = {
@@ -10,22 +32,7 @@ in
         options = {
           sshSlaves = lib.mkOption {
             default = { };
-            type = lib.types.attrsOf (lib.types.submodule ({config, ... }: {
-              options = {
-                hostIP = lib.mkOption {
-                  type = lib.types.str;
-                  description = "IP address of the SSH slave";
-                };
-                numExecutors = lib.mkOption {
-                  type = lib.types.int;
-                  description = "Number of executors for this SSH slave";
-                };
-                labelString = lib.mkOption {
-                  type = lib.types.str;
-                  description = "Jenkins node label string for this SSH slave";
-                };
-              };
-            }));
+            type = lib.types.attrsOf (nodeSubModule { });
           };
           containerSlaves = lib.mkOption {
             type = lib.types.submodule {
@@ -39,23 +46,9 @@ in
                   description = "External interface of the machine";
                 };
                 containers = lib.mkOption {
-                  type = lib.types.attrsOf (lib.types.submodule {
-                    options = {
-                      hostIP = lib.mkOption {
-                        type = lib.types.str;
-                        description = "Local address of the container";
-                      };
-                      numExecutors = lib.mkOption {
-                        type = lib.types.int;
-                        default = 1;
-                        description = "Number of executors for the container";
-                      };
-                      labelString = lib.mkOption {
-                        type = lib.types.str;
-                        default = "nixos linux ${pkgs.system}";
-                        description = "Jenkins node label string for the container";
-                      };
-                    };
+                  type = lib.types.attrsOf (nodeSubModule {
+                    numExecutors = lib.mkDefault 1;
+                    labelString = lib.mkDefault "nixos linux ${pkgs.system}";
                   });
                 };
               };
