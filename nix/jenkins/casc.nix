@@ -43,7 +43,7 @@ in
             inherit (config.jenkins-nix-ci.nodes.containerSlaves)
               containers;
           in
-          lib.flip lib.mapAttrsToList (sshSlaves // containers) (name: node: {
+          lib.flip lib.mapAttrsToList (containers // sshSlaves) (name: node: {
             permanent = {
               inherit name;
               inherit (node) labelString numExecutors;

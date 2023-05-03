@@ -53,11 +53,15 @@ in
           authorizedKey =
             # In lieu of https://github.com/Mic92/sops-nix/issues/317
             let
+              # TODO: Switch to https://github.com/NixOS/nix/issues/1491#issuecomment-1284348948
+              # Because we can't use IFD when evaluating cross-system config (macos)
               fromYAML = pkgs.callPackage ../../../from-yaml.nix { };
               sopsJson = fromYAML (builtins.readFile sops.defaultSopsFile);
             in
             sopsJson.jenkins-nix-ci.ssh-key.public_unencrypted;
         in
+        # TODO: How do we support macOS?
+        # cf. https://github.com/LnL7/nix-darwin/issues/152
         {
           users.users.${jenkins.user}.openssh.authorizedKeys.keys = [ authorizedKey ];
         };
