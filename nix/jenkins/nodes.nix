@@ -79,18 +79,7 @@ in
         localAddress = container.hostIP;
         autoStart = true;
         privateNetwork = true;
-        config = {
-          _module.args = {
-            inherit (config.services) jenkins;
-          };
-          nixpkgs = { inherit (config.nixpkgs) overlays; };
-          imports =
-            config.jenkins-nix-ci.feature-outputs.node.nixosConfiguration
-            ++ [
-              ./slave/nixos.nix
-            ];
-          system.stateVersion = config.system.stateVersion;
-        };
+        config = import ./slave/nixos-container.nix { inherit config; }; 
       });
   };
 }
