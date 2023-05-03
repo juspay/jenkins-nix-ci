@@ -1,4 +1,4 @@
-{ lib, pkgs, ... }:
+{ config, lib, pkgs, ... }:
 
 let
   types = lib.types;
@@ -29,7 +29,7 @@ in
       '';
     };
 
-    node.config = lib.mkOption {
+    node.nixosConfiguration = lib.mkOption {
       type = types.deferredModule;
       readOnly = true;
       default = { pkgs, jenkins, ... }: {
@@ -46,5 +46,12 @@ in
         };
       };
     };
+
+    node.darwinConfiguration = lib.mkOption {
+      type = types.deferredModule;
+      readOnly = true;
+      default = config.features.nix.node.nixosConfiguration;
+    };
   };
+
 }

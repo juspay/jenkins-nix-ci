@@ -85,7 +85,7 @@ in
           };
           nixpkgs = { inherit (config.nixpkgs) overlays; };
           imports =
-            config.jenkins-nix-ci.feature-outputs.node.config
+            config.jenkins-nix-ci.feature-outputs.node.nixosConfiguration
             ++ [
               ./slave.nix
             ];

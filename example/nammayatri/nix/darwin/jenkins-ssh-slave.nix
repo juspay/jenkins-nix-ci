@@ -1,15 +1,19 @@
-# DRY: with jenkins-nix-ci
-{ pkgs, ... }:
+# TODO DRY: with jenkins-nix-ci
+{ flake, pkgs, ... }:
 
 # Two manual steps required:
-# - authorize keys manually
+# - authorize keys manually (cf. the note in ssh-key/default.nix)
 # - allow macos to accept ssh connections for this user: https://superuser.com/a/445814
 #   > dscl . change /Groups/com.apple.access_ssh RecordName com.apple.access_ssh com.apple.access_ssh-disabled
 {
+  _module.args = {
+    # HACK: for features/nix/default.nix
+    # Instead can we just use "jenkins" hardcoded everywhere?
+    jenkins.user = "jenkins";
+  };
+  imports = flake.self.nixosConfigurations.jenkins-nix-ci.config.jenkins-nix-ci.feature-outputs.node.darwinConfiguration;
+
   users.knownUsers = [ "jenkins" ];
-  # FIXME: nix-darwin has no way to set authorized_keys
-  # https://github.com/LnL7/nix-darwin/issues/562
-  # we must manually do it! 
   users.users.jenkins = {
     home = "/var/lib/jenkins";
     uid = 987;
@@ -17,20 +21,10 @@
     shell = "/bin/bash";
   };
 
-  # TODO: The below configuration violates DRY. We should ideally use the
-  # 'features' module (and the feature-outputs' node.config) here.
-
   environment.systemPackages = with pkgs; [
+    # TODO: DRY with nixos packages
     bashInteractive
-    cachix
-    devour-flake
-    (pkgs.callPackage ../../../../nix/jenkins/features/cachix/cachixPush.nix { })
   ];
-
-  nix.settings = {
-    allowed-users = [ "jenkins" ];
-    trusted-users = [ "jenkins" ];
-  };
 
   home-manager.users.jenkins = {
     # Because, the ssh-slaves plugin looks for java under ~/jdk

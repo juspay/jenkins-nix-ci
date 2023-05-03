@@ -12,15 +12,12 @@
         # Your nix-darwin configuration goes here
         {
           nix.settings = {
-            experimental-features = "nix-command flakes";
             extra-platforms = "aarch64-darwin x86_64-darwin";
             auto-optimise-store = true;
             trusted-users = [ "root" "admin" ];
           };
 
-          services = {
-            nix-daemon.enable = true;
-          };
+          services.nix-daemon.enable = true;
 
           # Used for backwards compatibility, please read the changelog before changing.
           # $ darwin-rebuild changelog

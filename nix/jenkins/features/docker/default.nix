@@ -47,17 +47,29 @@ in
       '';
     };
 
-    node.config = lib.mkOption {
+    node.nixosConfiguration = lib.mkOption {
       type = types.deferredModule;
       readOnly = true;
-      default = { pkgs, ... }: {
+      default = { pkgs, lib, ... }: {
         environment.systemPackages = [
           pkgs.docker
           (pkgs.callPackage ./dockerPush.nix { })
         ];
-
         virtualisation.docker.enable = true;
         users.users.jenkins.extraGroups = [ "docker" ];
+      };
+    };
+
+    node.darwinConfiguration = lib.mkOption {
+      type = types.deferredModule;
+      readOnly = true;
+      default = { pkgs, lib, ... }: {
+        environment.systemPackages = [
+          pkgs.docker
+          (pkgs.callPackage ./dockerPush.nix { })
+        ];
+        # 'virtualisation.docker' does not exist in nix-darwin.
+        # We may have to manually install Docker Desktop.
       };
     };
   };

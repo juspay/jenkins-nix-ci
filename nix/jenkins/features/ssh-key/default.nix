@@ -45,7 +45,7 @@ in
       default = null;
     };
 
-    node.config = lib.mkOption {
+    node.nixosConfiguration = lib.mkOption {
       type = types.deferredModule;
       readOnly = true;
       default = { pkgs, ... }:
@@ -60,11 +60,17 @@ in
             in
             sopsJson.jenkins-nix-ci.ssh-key.public_unencrypted;
         in
-        # TODO: How do we support macOS?
-        # cf. https://github.com/LnL7/nix-darwin/issues/152
         {
           users.users.${jenkins.user}.openssh.authorizedKeys.keys = [ authorizedKey ];
         };
+    };
+
+    node.darwinConfiguration = lib.mkOption {
+      type = types.deferredModule;
+      readOnly = true;
+      # TODO: How do we support macOS?
+      # cf. https://github.com/LnL7/nix-darwin/issues/152
+      default = { };
     };
   };
 }
