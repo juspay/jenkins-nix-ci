@@ -29,6 +29,7 @@
 
     darwinModules = {
       default = inputs.self.nixosModules.common;
+      slave = ./nix/jenkins/slave/macos.nix;
     };
   };
 }

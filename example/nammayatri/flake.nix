@@ -22,11 +22,16 @@
       imports = [
         inputs.nixos-flake.flakeModule
         ./nix/deploy.nix
-
-        # TODO: Refactor macos configuration, in the same manner as nixosConfiguration below
-        # And make it aware of jenkins-nix-ci module options.
-        ./nix/darwin
       ];
+
+      flake.darwinConfigurations.biryani = self.nixos-flake.lib.mkARMMacosSystem ({ flake, pkgs, ... }: {
+        imports = [
+          flake.inputs.jenkins-nix-ci.darwinModules.default
+          flake.inputs.jenkins-nix-ci.darwinModules.slave
+          ./nix/darwin/configuration.nix
+          ./nix/tailscale.nix
+        ];
+      });
 
       # System configuration
       flake.nixosConfigurations.jenkins-nix-ci = self.nixos-flake.lib.mkLinuxSystem ({ pkgs, config, ... }: {

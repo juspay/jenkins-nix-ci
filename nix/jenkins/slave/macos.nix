@@ -22,8 +22,10 @@
   };
 
   environment.systemPackages = with pkgs; [
-    # TODO: DRY with nixos packages
-    bashInteractive
+    git
+    bash # 'sh' step requires this
+    coreutils
+    which
   ];
 
   home-manager.users.jenkins = {

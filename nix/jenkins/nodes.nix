@@ -87,7 +87,7 @@ in
           imports =
             config.jenkins-nix-ci.feature-outputs.node.nixosConfiguration
             ++ [
-              ./slave.nix
+              ./slave/nixos.nix
             ];
           system.stateVersion = config.system.stateVersion;
         };
