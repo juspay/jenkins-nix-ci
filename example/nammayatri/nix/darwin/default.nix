@@ -3,13 +3,14 @@
 {
   flake = {
     # Configurations for macOS machines
-    darwinConfigurations.biryani = self.nixos-flake.lib.mkARMMacosSystem {
+    darwinConfigurations.biryani = self.nixos-flake.lib.mkARMMacosSystem ({ flake, pkgs, ... }: {
       imports = [
+        flake.inputs.jenkins-nix-ci.darwinModules.default
         ./jenkins-ssh-slave.nix
         ../tailscale.nix
 
         # Your nix-darwin configuration goes here
-        ({ pkgs, ... }: {
+        {
           nix.settings = {
             experimental-features = "nix-command flakes";
             extra-platforms = "aarch64-darwin x86_64-darwin";
@@ -24,7 +25,7 @@
           # Used for backwards compatibility, please read the changelog before changing.
           # $ darwin-rebuild changelog
           system.stateVersion = 4;
-        })
+        }
         # Setup home-manager in nix-darwin config
         self.darwinModules.home-manager
         {
@@ -34,7 +35,7 @@
           };
         }
       ];
-    };
+    });
 
     # home-manager configuration goes here.
     homeModules.default = { pkgs, ... }: {

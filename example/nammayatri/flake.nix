@@ -54,7 +54,7 @@
                 sshSlaves = {
                   # Mac Studio in office.
                   biryani = {
-                    hostIP = "100.97.32.60";  # Tailscale IP
+                    hostIP = "100.97.32.60"; # Tailscale IP
                     numExecutors = 4;
                     labelString = "macos";
                   };
@@ -103,6 +103,7 @@
             pkgs.nixpkgs-fmt
             inputs'.deploy-rs.packages.default
             pkgs.sops
+          ] ++ lib.optionals (!pkgs.stdenv.isDarwin) [
             self.nixosConfigurations.jenkins-nix-ci.config.jenkins-nix-ci.nix-prefetch-jenkins-plugins
           ];
         };
