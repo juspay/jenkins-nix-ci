@@ -5,8 +5,9 @@ def call(Map args = [:]) {
     systemStr = (system == null) ? "default" : system
     stage ("Nix Build All (${systemStr})") {
       nixArgs = (system == null) ? "" : "--option system ${system}"
-      sh """
-        nix-build-all ${nixArgs}
-        """
+      flakeOutputs = sh script: "nix-build-all ${nixArgs}",
+         returnStdout: true
+      echo flakeOutputs
+      env.FLAKE_OUTPUTS = flakeOutputs.trim()
     }
 }
