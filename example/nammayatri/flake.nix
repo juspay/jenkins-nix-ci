@@ -61,7 +61,7 @@
                   biryani = {
                     hostIP = "100.97.32.60"; # Tailscale IP
                     numExecutors = 4;
-                    labelString = "macos";
+                    labelString = "macos x86_64-darwin aarch64-darwin";
                   };
                 };
               };
