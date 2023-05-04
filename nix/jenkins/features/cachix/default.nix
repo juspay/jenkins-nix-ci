@@ -46,7 +46,6 @@ in
       default = { pkgs, ... }: {
         environment.systemPackages = [
           pkgs.cachix
-          (pkgs.callPackage ./cachixPush.nix { })
         ];
       };
     };

@@ -6,12 +6,7 @@ def call(Map args = [:]) {
     stage ("Nix Build All (${systemStr})") {
       nixArgs = (system == null) ? "" : "--option system ${system}"
       sh """
-        # Make sure that flake.lock is sync
-        nix flake lock --no-update-lock-file
-
-        # Do a full nix build (all outputs)
-        # This uses https://github.com/srid/devour-flake
-        devour-flake . ${nixArgs}
+        nix-build-all ${nixArgs}
         """
     }
 }
