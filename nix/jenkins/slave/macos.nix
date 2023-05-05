@@ -1,4 +1,3 @@
-# TODO DRY: with jenkins-nix-ci
 { flake, pkgs, ... }:
 
 # Two manual steps required:

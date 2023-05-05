@@ -9,7 +9,6 @@ let
 in
 {
   flake.deploy.nodes = {
-    # TODO: rename to Linux
     nixos = {
       hostname = "100.96.121.13"; # Tailscale IP
       sshUser = "admin";

@@ -5,8 +5,7 @@
     nixos-flake.url = "github:srid/nixos-flake";
     sops-nix.url = "github:Mic92/sops-nix";
 
-    # https://github.com/serokell/deploy-rs/pull/205
-    deploy-rs.url = "github:serokell/deploy-rs/rvem/improve-temp-path-handling";
+    deploy-rs.url = "github:serokell/deploy-rs";
 
     # Darwin
     nix-darwin.url = "github:lnl7/nix-darwin/master";

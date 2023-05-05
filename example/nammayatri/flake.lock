@@ -29,16 +29,15 @@
         "utils": "utils"
       },
       "locked": {
-        "lastModified": 1681974793,
-        "narHash": "sha256-ee7PV3iuQZKFZbLk1iPbp6nanEoYQ+RzKlfxEf3YJlE=",
+        "lastModified": 1683255183,
+        "narHash": "sha256-UUxpb5PMkFfP2JGoPMEUvKbxv+wCkTWy4uZs1MyyCes=",
         "owner": "serokell",
         "repo": "deploy-rs",
-        "rev": "784e9ee24d977c99dcb5ba5aef81dae48cb899fb",
+        "rev": "6b0b6a1c2527e8b1ef370a308b6ef8903004ac47",
         "type": "github"
       },
       "original": {
         "owner": "serokell",
-        "ref": "rvem/improve-temp-path-handling",
         "repo": "deploy-rs",
         "type": "github"
       }
