@@ -3,7 +3,7 @@
     nixpkgs.url = "github:nixos/nixpkgs/nixos-unstable";
     flake-parts.url = "github:hercules-ci/flake-parts";
     nixos-flake.url = "github:srid/nixos-flake";
-    sops-nix.url = "github:Mic92/sops-nix";
+    sops-nix.url = "github:juspay/sops-nix/json-nested"; # https://github.com/Mic92/sops-nix/pull/328
 
     deploy-rs.url = "github:serokell/deploy-rs";
 
@@ -97,7 +97,8 @@
           ./nix/nixos/configuration.nix
           ./nix/tailscale.nix
         ];
-        sops.defaultSopsFile = ./secrets.yaml;
+        sops.defaultSopsFile = ./secrets.json;
+        sops.defaultSopsFormat = "json";
       });
 
       perSystem = { self', inputs', system, lib, config, pkgs, ... }: {

@@ -8,7 +8,7 @@ A [NixOS module][nixos-mod] to run [Jenkins][jenkins], optimized specifically fo
 
 - Fully nixified
     - [x] Jenkins configuration declared in Nix (via [configuration-as-code](https://github.com/jenkinsci/configuration-as-code-plugin) plugin)
-    - [x] [sops-nix] for secrets management, for use in Jenkins credentials/
+    - [x] [sops-nix] for secrets management, for use in Jenkins credentials. Known limitation: only JSON format is supported.
     - [x] Jenkins plugins are managed by [jenkinsPlugins2nix](https://github.com/Fuuzetsu/jenkinsPlugins2nix)
 - CI features as NixOS modules, encapsulated along with their associated groovy library for referencing in `Jenkinsfile`
     - [x] [cachix](https://www.cachix.org/): provides `cachixPush` and `cachixUse` pipeline steps
