@@ -51,14 +51,10 @@ in
       default = { pkgs, ... }:
         let
           authorizedKey =
-            # In lieu of https://github.com/Mic92/sops-nix/issues/317
             let
-              # TODO: Switch to https://github.com/NixOS/nix/issues/1491#issuecomment-1284348948
-              # Because we can't use IFD when evaluating cross-system config (macos)
-              fromYAML = pkgs.callPackage ../../../from-yaml.nix { };
-              sopsJson = fromYAML (builtins.readFile sops.defaultSopsFile);
+              secretsRaw = assert (sops.defaultSopsFormat == "json"); builtins.fromJSON (builtins.readFile sops.defaultSopsFile);
             in
-            sopsJson.jenkins-nix-ci.ssh-key.public_unencrypted;
+            secretsRaw.jenkins-nix-ci.ssh-key.public_unencrypted;
         in
         {
           users.users.${jenkins.user}.openssh.authorizedKeys.keys = [ authorizedKey ];
