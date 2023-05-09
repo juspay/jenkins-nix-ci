@@ -9,6 +9,7 @@
   };
   outputs = inputs: {
     nixosModules = rec {
+      # The common module will work on NixOS and macOS alike.
       common = { pkgs, ... }: {
         nixpkgs.overlays = [
           (self: super: {
@@ -19,6 +20,8 @@
           })
         ];
       };
+
+      # The default NixOS module.
       default = {
         imports = [
           common
@@ -27,6 +30,7 @@
       };
     };
 
+    # Modules to use in nix-darwin
     darwinModules = {
       default = inputs.self.nixosModules.common;
       slave = ./nix/jenkins/slave/macos.nix;

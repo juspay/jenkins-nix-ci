@@ -48,7 +48,7 @@ in
     node.nixosConfiguration = lib.mkOption {
       type = types.deferredModule;
       readOnly = true;
-      default = { pkgs, ... }:
+      default =
         let
           authorizedKey =
             let
