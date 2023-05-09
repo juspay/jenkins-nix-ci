@@ -8,16 +8,32 @@
     devour-flake.flake = false;
   };
   outputs = inputs: {
-    nixosModules.default = { pkgs, ... }: {
-      nixpkgs.overlays = [
-        (self: super: {
-          cachix = inputs.cachix.packages.${pkgs.system}.default;
-          flake-outputs = inputs.flake-outputs.packages.${pkgs.system}.default;
-          devour-flake = self.callPackage inputs.devour-flake { inherit (inputs) devour-flake; };
-          jenkinsPlugins2nix = inputs.jenkinsPlugins2nix.packages.${pkgs.system}.jenkinsPlugins2nix;
-        })
-      ];
-      imports = [ ./nix/jenkins ];
+    nixosModules = rec {
+      # The common module will work on NixOS and macOS alike.
+      common = { pkgs, ... }: {
+        nixpkgs.overlays = [
+          (self: super: {
+            cachix = inputs.cachix.packages.${pkgs.system}.default;
+            flake-outputs = inputs.flake-outputs.packages.${pkgs.system}.default;
+            devour-flake = self.callPackage inputs.devour-flake { };
+            jenkinsPlugins2nix = inputs.jenkinsPlugins2nix.packages.${pkgs.system}.jenkinsPlugins2nix;
+          })
+        ];
+      };
+
+      # The default NixOS module.
+      default = {
+        imports = [
+          common
+          ./nix/jenkins
+        ];
+      };
+    };
+
+    # Modules to use in nix-darwin
+    darwinModules = {
+      default = inputs.self.nixosModules.common;
+      slave = ./nix/jenkins/slave/macos.nix;
     };
   };
 }

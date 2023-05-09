@@ -40,7 +40,13 @@ in
       default = null;
     };
 
-    node.config = lib.mkOption {
+    node.nixosConfiguration = lib.mkOption {
+      type = types.deferredModule;
+      readOnly = true;
+      default = { };
+    };
+
+    node.darwinConfiguration = lib.mkOption {
       type = types.deferredModule;
       readOnly = true;
       default = { };

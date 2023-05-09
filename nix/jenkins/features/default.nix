@@ -22,7 +22,11 @@
       type = lib.types.package;
       readOnly = true;
     };
-    node.config = lib.mkOption {
+    node.nixosConfiguration = lib.mkOption {
+      type = lib.types.listOf lib.types.deferredModule;
+      internal = true;
+    };
+    node.darwinConfiguration = lib.mkOption {
       type = lib.types.listOf lib.types.deferredModule;
       internal = true;
     };
@@ -46,6 +50,7 @@
           # `./vars` only.
           paths = sharedLibraries;
         };
-      node.config = lib.forEach (lib.attrValues enabledFeatures) (cfg: cfg.node.config);
+      node.nixosConfiguration = lib.forEach (lib.attrValues enabledFeatures) (cfg: cfg.node.nixosConfiguration);
+      node.darwinConfiguration = lib.forEach (lib.attrValues enabledFeatures) (cfg: cfg.node.darwinConfiguration);
     };
 }

@@ -1,8 +1,8 @@
 { pkgs, lib, config, ... }:
 
 let
-  cascLib = pkgs.callPackage ./casc/lib.nix { };
   localRetriever = pkgs.callPackage ./casc/local-retriever.nix { };
+  mkNode = pkgs.callPackage ./casc/mk-node.nix { inherit config; };
 in
 {
   config = {
@@ -38,21 +38,14 @@ in
         numExecutors = 0;
 
         nodes =
-          lib.flip lib.mapAttrsToList config.jenkins-nix-ci.nodes.containerSlaves.containers (name: container: {
-            permanent = {
-              inherit name;
-              labelString = "nixos linux x86_64-linux";
-              numExecutors = 1;
-              remoteFS = config.services.jenkinsSlave.home;
-              retentionStrategy = "always";
-              launcher.ssh = {
-                credentialsId = "ssh-private-key";
-                host = container.localAddress;
-                port = 22;
-                sshHostKeyVerificationStrategy.manuallyTrustedKeyVerificationStrategy.requireInitialManualTrust = false;
-              };
-            };
-          });
+          let
+            inherit (config.jenkins-nix-ci.nodes)
+              sshSlaves;
+            inherit (config.jenkins-nix-ci.nodes.containerSlaves)
+              containers;
+          in
+          lib.mapAttrsToList mkNode containers ++
+          lib.mapAttrsToList mkNode sshSlaves;
       };
       unclassified = {
         location.url = "https://${config.jenkins-nix-ci.domain}/";

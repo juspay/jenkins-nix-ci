@@ -1,13 +1,39 @@
-{ lib, config, ... }:
+{ pkgs, lib, config, ... }:
 
 let
   containerSlaves = config.jenkins-nix-ci.nodes.containerSlaves;
+
+  nodeSubModule = defaults: lib.types.submoduleWith {
+    modules = [
+      defaults
+      {
+        options = {
+          hostIP = lib.mkOption {
+            type = lib.types.str;
+            description = "IP address of the node";
+          };
+          numExecutors = lib.mkOption {
+            type = lib.types.int;
+            description = "Number of executors for this node";
+          };
+          labelString = lib.mkOption {
+            type = lib.types.str;
+            description = "Node label string (referenced in Jenkinsfile)";
+          };
+        };
+      }
+    ];
+  };
 in
 {
   options = {
     jenkins-nix-ci.nodes = lib.mkOption {
       type = lib.types.submodule {
         options = {
+          sshSlaves = lib.mkOption {
+            default = { };
+            type = lib.types.attrsOf (nodeSubModule { });
+          };
           containerSlaves = lib.mkOption {
             type = lib.types.submodule {
               options = {
@@ -20,13 +46,9 @@ in
                   description = "External interface of the machine";
                 };
                 containers = lib.mkOption {
-                  type = lib.types.attrsOf (lib.types.submodule {
-                    options = {
-                      localAddress = lib.mkOption {
-                        type = lib.types.str;
-                        description = "Local address of the container";
-                      };
-                    };
+                  type = lib.types.attrsOf (nodeSubModule {
+                    numExecutors = lib.mkDefault 1;
+                    labelString = lib.mkDefault "nixos linux ${pkgs.system}";
                   });
                 };
               };
@@ -54,21 +76,10 @@ in
     containers =
       lib.flip lib.mapAttrs containerSlaves.containers (_name: container: {
         inherit (containerSlaves) hostAddress;
-        inherit (container) localAddress;
+        localAddress = container.hostIP;
         autoStart = true;
         privateNetwork = true;
-        config = {
-          _module.args = {
-            inherit (config.services) jenkins;
-          };
-          nixpkgs = { inherit (config.nixpkgs) overlays; };
-          imports =
-            config.jenkins-nix-ci.feature-outputs.node.config
-            ++ [
-              ./slave.nix
-            ];
-          system.stateVersion = config.system.stateVersion;
-        };
+        config = import ./slave/nixos-container.nix { inherit config; }; 
       });
   };
 }
