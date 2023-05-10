@@ -14,6 +14,10 @@ in
 
   services.nix-daemon.enable = true;
 
+  users.users.admin = {
+    openssh.authorizedKeys.keys = import ../admin-keys.nix;
+  };
+
   home-manager.users.${adminUser} = {
     home.stateVersion = "22.11";
 

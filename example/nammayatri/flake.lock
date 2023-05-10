@@ -302,7 +302,7 @@
       },
       "locked": {
         "lastModified": 0,
-        "narHash": "sha256-e2A34eGTdJPbom4hHjxDW/JCB2ML6AAmjhFPGIEtugs=",
+        "narHash": "sha256-lPIpNEsAvQLMNrZeyY5xAPCpugZ36ZzKg8hikqQuWSA=",
         "path": "../..",
         "type": "path"
       },
@@ -380,16 +380,16 @@
         ]
       },
       "locked": {
-        "lastModified": 1682773107,
-        "narHash": "sha256-+h94XeJnG3uk5imJlBi/1lVmcfCbxHpwZp5u7n3Krwg=",
-        "owner": "lnl7",
+        "lastModified": 1683734967,
+        "narHash": "sha256-hRuNo1vqmy4AFLqS5TpLgN80ZDy4fJfvGOJkMLdQmrU=",
+        "owner": "shivaraj-bh",
         "repo": "nix-darwin",
-        "rev": "379d42fad6bc5c28f79d5f7ff2fa5f1c90cb7bf8",
+        "rev": "f781cb0ac5ea2daa5183b8df8f4de4ef0747f440",
         "type": "github"
       },
       "original": {
-        "owner": "lnl7",
-        "ref": "master",
+        "owner": "shivaraj-bh",
+        "ref": "authorized-keys",
         "repo": "nix-darwin",
         "type": "github"
       }
