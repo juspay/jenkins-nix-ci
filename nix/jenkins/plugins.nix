@@ -1,4 +1,4 @@
-{ pkgs, lib, config, ... }:
+{ lib, config, ... }:
 
 {
   options = {
@@ -18,12 +18,12 @@
       '';
     };
     nix-prefetch-jenkins-plugins = lib.mkOption {
-      type = lib.types.package;
-      default = pkgs.writeShellApplication {
+      type = lib.types.functionTo lib.types.package;
+      default = pkgs: pkgs.writeShellApplication {
         name = "nix-prefetch-jenkins-plugins";
         text = ''
-          ${lib.getExe pkgs.jenkinsPlugins2nix} \
-            ${lib.foldl (a: b: "${a} -p ${b}") "" config.plugins}
+          ${pkgs.lib.getExe pkgs.jenkinsPlugins2nix} \
+            ${pkgs.lib.foldl (a: b: "${a} -p ${b}") "" config.plugins}
         '';
       };
       description = ''

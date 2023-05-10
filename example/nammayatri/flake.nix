@@ -102,14 +102,22 @@
       });
 
       perSystem = { self', inputs', system, lib, config, pkgs, ... }: {
+        _module.args.pkgs = import inputs.nixpkgs {
+          inherit system;
+          overlays = [
+            (inputs.jenkins-nix-ci.overlay self)
+            (_: _: {
+              deploy-rs = inputs.deploy-rs.packages.${system}.default;
+            })
+          ];
+        };
         formatter = pkgs.nixpkgs-fmt;
         devShells.default = pkgs.mkShell {
-          buildInputs = [
-            pkgs.nixpkgs-fmt
-            inputs'.deploy-rs.packages.default
-            pkgs.sops
-          ] ++ lib.optionals (!pkgs.stdenv.isDarwin) [
-            self.nixosConfigurations.jenkins-nix-ci.config.jenkins-nix-ci.nix-prefetch-jenkins-plugins
+          buildInputs = with pkgs; [
+            nixpkgs-fmt
+            deploy-rs
+            sops
+            nix-prefetch-jenkins-plugins
           ];
         };
       };

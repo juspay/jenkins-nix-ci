@@ -8,17 +8,18 @@
     devour-flake.flake = false;
   };
   outputs = inputs: {
+    overlay = flake: self: super: {
+      cachix = inputs.cachix.packages.${self.system}.default;
+      flake-outputs = inputs.flake-outputs.packages.${self.system}.default;
+      devour-flake = self.callPackage inputs.devour-flake { };
+      jenkinsPlugins2nix = inputs.jenkinsPlugins2nix.packages.${if self.system == "aarch64-darwin" then "x86_64-darwin" else self.system}.jenkinsPlugins2nix;
+      nix-prefetch-jenkins-plugins = flake.nixosConfigurations.jenkins-nix-ci.config.jenkins-nix-ci.nix-prefetch-jenkins-plugins self;
+    };
+
     nixosModules = rec {
       # The common module will work on NixOS and macOS alike.
-      common = { pkgs, ... }: {
-        nixpkgs.overlays = [
-          (self: super: {
-            cachix = inputs.cachix.packages.${pkgs.system}.default;
-            flake-outputs = inputs.flake-outputs.packages.${pkgs.system}.default;
-            devour-flake = self.callPackage inputs.devour-flake { };
-            jenkinsPlugins2nix = inputs.jenkinsPlugins2nix.packages.${pkgs.system}.jenkinsPlugins2nix;
-          })
-        ];
+      common = { flake, pkgs, ... }: {
+        nixpkgs.overlays = [ (inputs.self.overlay flake) ];
       };
 
       # The default NixOS module.
