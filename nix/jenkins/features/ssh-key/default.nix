@@ -1,4 +1,4 @@
-{ cascLib, sops, jenkins, lib, ... }:
+{ config, cascLib, sops, jenkins, lib, ... }:
 
 let
   types = lib.types;
@@ -64,9 +64,7 @@ in
     node.darwinConfiguration = lib.mkOption {
       type = types.deferredModule;
       readOnly = true;
-      # TODO: How do we support macOS?
-      # cf. https://github.com/LnL7/nix-darwin/issues/152
-      default = { };
+      default = config.features.ssh-key.node.nixosConfiguration;
     };
   };
 }
