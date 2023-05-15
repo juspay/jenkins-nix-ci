@@ -105,7 +105,7 @@
         _module.args.pkgs = import inputs.nixpkgs {
           inherit system;
           overlays = [
-            (inputs.jenkins-nix-ci.overlay self)
+            inputs.jenkins-nix-ci.overlay
             (_: _: {
               deploy-rs = inputs.deploy-rs.packages.${system}.default;
             })
