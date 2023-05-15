@@ -13,7 +13,6 @@
       flake-outputs = inputs.flake-outputs.packages.${self.system}.default;
       devour-flake = self.callPackage inputs.devour-flake { };
       jenkinsPlugins2nix = inputs.jenkinsPlugins2nix.packages.${if self.system == "aarch64-darwin" then "x86_64-darwin" else self.system}.jenkinsPlugins2nix;
-      nix-prefetch-jenkins-plugins = flake.nixosConfigurations.jenkins-nix-ci.config.jenkins-nix-ci.nix-prefetch-jenkins-plugins self;
     };
 
     nixosModules = rec {

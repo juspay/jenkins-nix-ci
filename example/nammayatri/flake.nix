@@ -117,7 +117,10 @@
             nixpkgs-fmt
             deploy-rs
             sops
-            nix-prefetch-jenkins-plugins
+            (
+              let nixosConfig = self.nixosConfigurations.jenkins-nix-ci;
+              in nixosConfig.config.jenkins-nix-ci.nix-prefetch-jenkins-plugins pkgs
+            )
           ];
         };
       };
