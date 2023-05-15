@@ -8,7 +8,7 @@
     deploy-rs.url = "github:serokell/deploy-rs";
 
     # Darwin
-    nix-darwin.url = "github:shivaraj-bh/nix-darwin/authorized-keys"; # https://github.com/LnL7/nix-darwin/pull/654
+    nix-darwin.url = "github:LnL7/nix-darwin";
     nix-darwin.inputs.nixpkgs.follows = "nixpkgs";
     home-manager.url = "github:nix-community/home-manager";
     home-manager.inputs.nixpkgs.follows = "nixpkgs";
