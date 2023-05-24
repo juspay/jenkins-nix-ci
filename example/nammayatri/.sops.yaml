@@ -1,9 +1,0 @@
-keys:
-  - &admin_srid age1zdwstn787x2a7hllksjk0zpdx3wdvy3fju8hk33a583jtv3d8q9qsvzfan
-  - &server_nammayatri age1t46w429zmn9zjm76434g449eqw5ya4yj9np6m5qqqflhnu2sdvxqnn7kud
-creation_rules:
-  - path_regex: secrets.json$
-    key_groups:
-      - age:
-        - *admin_srid
-        - *server_nammayatri

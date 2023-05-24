@@ -21,7 +21,7 @@ A [NixOS module][nixos-mod] to run [Jenkins][jenkins], optimized specifically fo
 
 ## Examples
 
-- [./example/nammayatri](./example/nammayatri/flake.nix) (used in https://github.com/nammayatri/nammayatri)
+- https://github.com/nammayatri/jenkins-config (used by [Nammayatri](https://www.nammayatri.in/))
 - https://github.com/srid/nixos-config/blob/master/nixos/jenkins.nix (used in https://github.com/srid/emanote, https://github.com/srid/haskell-flake, etc.)
 
 ## Plugins
