@@ -14,6 +14,7 @@ A [NixOS module][nixos-mod] to run [Jenkins][jenkins], optimized specifically fo
 - CI features as NixOS modules, encapsulated along with their associated groovy library for referencing in `Jenkinsfile`
     - [x] `nix`: provides `nixBuildAll` to build all flake outputs, and sets `env.FLAKE_OUTPUTS` to the list of outputs built.
         - Uses `--no-update-lock-file` (thus fails on out of sync `flake.lock` files)
+        - Supports sub flakes ([example](https://github.com/srid/haskell-flake/pull/179))
     - [x] [cachix](https://www.cachix.org/): provides `cachixPush` and `cachixUse` pipeline steps
         - `cachixPush` will push the `env.FLAKE_OUTPUTS` built by the `nix` feature
     - [x] [docker](https://www.docker.com/): provides `dockerPush` pipeline step
