@@ -1,14 +1,17 @@
 {
   inputs = {
     jenkinsPlugins2nix.url = "github:Fuuzetsu/jenkinsPlugins2nix";
+
     flake-outputs.url = "github:nix-systems/flake-outputs";
     devour-flake.url = "github:srid/devour-flake";
     devour-flake.flake = false;
+    nixci.url = "github:srid/nixci";
   };
   outputs = inputs: {
     overlay = self: super: {
       flake-outputs = inputs.flake-outputs.packages.${self.system}.default;
       devour-flake = self.callPackage inputs.devour-flake { };
+      nixci = inputs.nixci.packages.${self.system}.default;
       jenkinsPlugins2nix = inputs.jenkinsPlugins2nix.packages.${if self.system == "aarch64-darwin" then "x86_64-darwin" else self.system}.jenkinsPlugins2nix;
     };
 

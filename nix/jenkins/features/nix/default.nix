@@ -37,6 +37,7 @@ in
           nix
           flake-outputs
           devour-flake
+          nixci
           (pkgs.callPackage ./nixBuildAll.nix { })
         ];
 
