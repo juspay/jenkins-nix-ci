@@ -25,6 +25,7 @@ in
       default = pkgs.runCommand "nix-groovy" { } ''
         mkdir -p $out/vars
         cp ${./nixBuildAll.groovy} $out/vars/nixBuildAll.groovy
+        cp ${./nixCI.groovy} $out/vars/nixCI.groovy
         cp ${./nixBuild.groovy} $out/vars/nixBuild.groovy
       '';
     };
