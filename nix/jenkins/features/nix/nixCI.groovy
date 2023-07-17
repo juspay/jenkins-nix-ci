@@ -4,7 +4,7 @@ def call(Map args = [:]) {
     system = args["system"]
     stage ("""NixCI (${system ?: "default"})""") {
       nixArgs = [
-        system ? "--option system ${system}" : "",
+        system ? "--system ${system}" : "",
       ]
       flakeOutputs = sh script: """nixci ${nixArgs.join(" ")}""",
          returnStdout: true
