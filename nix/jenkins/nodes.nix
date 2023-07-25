@@ -48,7 +48,7 @@ in
                 containers = lib.mkOption {
                   type = lib.types.attrsOf (nodeSubModule {
                     numExecutors = lib.mkDefault 1;
-                    labelString = lib.mkDefault "nixos linux ${pkgs.system}";
+                    labelString = lib.mkDefault "nixos linux ${pkgs.system} ${if pkgs.system == "x86_64-linux" then "aarch64-linux" else ""}";
                   });
                 };
               };
