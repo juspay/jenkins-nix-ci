@@ -6,7 +6,6 @@ pkgs.writeShellApplication {
   text = ''
     set -euo pipefail
 
-
     set -x
     # Do a git status, because the docker tag is based on working copy status
     git status
