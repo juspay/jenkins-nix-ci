@@ -1,7 +1,8 @@
 #!/usr/bin/env groovy
 
 def call(Map args = [:]) {
-    system = args["system"]
+    // Function args are deprecated
+    system = args["system"] ?: env.NIX_SYSTEM
     stage ("""NixCI (${system ?: "default"})""") {
       nixArgs = [
         system ? "--system ${system}" : "",

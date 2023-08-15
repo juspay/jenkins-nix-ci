@@ -6,12 +6,15 @@ pkgs.writeShellApplication {
   text = ''
     set -euo pipefail
 
+    ARG1="''${1:-start}"
+    shift 1 || true
+
     set -x
     # Do a git status, because the docker tag is based on working copy status
     git status
-    docker load -i "$(nix build ".#$1" --print-out-paths --no-update-lock-file)"
+    docker load -i "$(nix build ".#$ARG1" --print-out-paths --no-update-lock-file "$@")"
     set +x
-    IMAGE_NAME="$(nix eval --json .#packages.x86_64-linux."$1".buildArgs | jq -r '"\(.name):\(.tag)"')"
+    IMAGE_NAME="$(nix eval --json .#packages.x86_64-linux."$ARG1".buildArgs | jq -r '"\(.name):\(.tag)"')"
     echo "Built and loaded: ''${IMAGE_NAME}"
 
     echo "Logging in to Docker Registry"
