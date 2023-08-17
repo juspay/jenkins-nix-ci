@@ -45,6 +45,15 @@ in
                   type = lib.types.str;
                   description = "External interface of the machine";
                 };
+                max-jobs = lib.mkOption {
+                  type = lib.types.int;
+                  description = ''
+                    Maximum number of jobs to run on each container.
+
+                    You should set this to a reasonable number: `nproc --all`
+                    divided by the number of containers.
+                  '';
+                };
                 containers = lib.mkOption {
                   type = lib.types.attrsOf (nodeSubModule {
                     numExecutors = lib.mkDefault 1;

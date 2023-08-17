@@ -11,5 +11,6 @@
     ++ [
       ./nixos.nix
     ];
+  nix.settings.max-jobs = config.jenkins-nix-ci.nodes.containerSlaves.max-jobs;
   system.stateVersion = config.system.stateVersion;
 }
