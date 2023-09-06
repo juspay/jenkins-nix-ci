@@ -49,7 +49,7 @@
       };
       packages = with pkgs; [
         git
-        bash # 'sh' step requires this
+        bashInteractive # 'sh' step requires this
         coreutils
         which
       ];
