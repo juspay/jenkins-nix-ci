@@ -1,4 +1,5 @@
 {
+  description = "A NixOS module for Jenkins, optimized specifically for running projects using Nix.";
   inputs = {
     jenkinsPlugins2nix.url = "github:Fuuzetsu/jenkinsPlugins2nix";
 
