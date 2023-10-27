@@ -23,7 +23,9 @@ pkgs.writeShellApplication {
     # password insecurely.
     HOME="$(mktemp -d)"
     export HOME
-    trap 'rm -rf "$HOME"'  EXIT
+
+    # Remove the image so it doesn't eat up disk space over time.
+    trap 'docker rmi "''${IMAGE_NAME}"; rm -rf "$HOME"'  EXIT
 
     echo "''${DOCKER_PASS}" | docker login -u "''${DOCKER_USER}" --password-stdin "''${DOCKER_SERVER}"
     set -x
