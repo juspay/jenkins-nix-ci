@@ -43,6 +43,9 @@ You also want to get the host key (`ssh-keyscan localhost | ssh-to-age`) of the 
 
 Put both these public age keys in `.sops.yaml` of the repository.
 
+## Discussion
+
+- [Zulip](https://nixos.zulipchat.com/#narrow/stream/416818-jenkins-nix-ci)
 
 [sops-nix]: https://github.com/Mic92/sops-nix
 [nixos-mod]: https://nixos.wiki/wiki/NixOS_modules
