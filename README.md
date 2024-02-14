@@ -23,7 +23,7 @@ A [NixOS module][nixos-mod] to run [Jenkins][jenkins], optimized specifically fo
 ## Examples
 
 - https://github.com/nammayatri/jenkins-config (used by [Nammayatri](https://www.nammayatri.in/))
-- https://github.com/srid/nixos-config/blob/master/nixos/jenkins.nix (used in https://github.com/srid/emanote, https://github.com/srid/haskell-flake, etc.)
+- [srid/nixos-config](https://github.com/srid/nixos-config/blob/aeb13a8b06692144910526be0c342fed017015b4/nixos/jenkins.nix)
 
 ## Plugins
 
