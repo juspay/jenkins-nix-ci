@@ -9,7 +9,7 @@ A [NixOS module][nixos-mod] to run [Jenkins][jenkins], optimized specifically fo
     - [x] [sops-nix] for secrets management, for use in Jenkins credentials. Known limitation: only JSON format is supported.
     - [x] Jenkins plugins are managed by [jenkinsPlugins2nix](https://github.com/Fuuzetsu/jenkinsPlugins2nix)
 - Isolated build agents
-    - [x] [NixOS containers](https://nixos.wiki/wiki/NixOS_Containers) as build agents (runs in local node)
+    - [x] [NixOS containers](https://wiki.nixos.org/wiki/NixOS_Containers) as build agents (runs in local node)
     - [x] External SSH slaves (useful to run macOS build nodes)
 - CI features as NixOS modules, encapsulated along with their associated groovy library for referencing in `Jenkinsfile`
     - [x] `nix`: provides `nixCI` (using [nixci](https://github.com/srid/nixci)) to build all flake outputs, and sets `env.FLAKE_OUTPUTS` to the list of outputs built.
